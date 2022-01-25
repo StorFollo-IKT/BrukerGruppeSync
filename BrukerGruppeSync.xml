@@ -1,0 +1,368 @@
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig IDIversion="Created by SDI7.2 - 2019-07-08" created="Tue Jan 25 12:25:42 CET 2022" createdBy="Eddie Hartman" modified="Tue Jan 25 21:07:48 CET 2022" modifiedBy="Eddie Hartman" version="7.1.1">
+    <Folder name="AssemblyLines">
+        <AssemblyLine name="BrukerGruppeSync">
+            <ModTime>1643112140960</ModTime>
+            <Settings>
+                <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+                <parameter name="automapattributes">false</parameter>
+                <parameter name="createTombstones">false</parameter>
+                <parameter name="includeGlobalPrologs">true</parameter>
+                <parameter name="includePrologs"><![CDATA[Logger
+Mapper]]></parameter>
+                <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+            </Settings>
+            <Hooks>
+                <ModTime>1642763283974</ModTime>
+            </Hooks>
+            <CheckpointConfig/>
+            <SandboxConfig/>
+            <SimulationConfig>
+                <SimulationStates>
+                    <Component name="Read in map" state="Enabled"/>
+                    <Component name="Agresso Stamdata" state="Enabled"/>
+                    <Component name="Read Organizations" state="Enabled"/>
+                    <Component name="Process Users" state="Enabled"/>
+                    <Component name="Set more manager info" state="Enabled"/>
+                    <Component name="Map to AD" state="Enabled"/>
+                </SimulationStates>
+                <ProxySettings/>
+            </SimulationConfig>
+            <LogConfig/>
+            <ContainerEF name="EntryFeedContainer"/>
+            <ContainerDF name="DataFlowContainer">
+                <ModTime>1643112140960</ModTime>
+                <Script name="Read in map">
+                    <ModTime>1643112140960</ModTime>
+                    <parameter name="script">var map = new Mapper("BrukerGruppeSync/mapping_resource.map");</parameter>
+                </Script>
+                <Connector name="Agresso Stamdata">
+                    <InheritFrom>system:/Connectors/ibmdi.FileSystem</InheritFrom>
+                    <ModTime>1643110038715</ModTime>
+                    <ConnectorMode>Iterator</ConnectorMode>
+                    <ConnectorState>Enabled</ConnectorState>
+                    <Configuration>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1643110038715</ModTime>
+                        <parameter name="filePath">BrukerGruppeSync/Stamdata3_FSI_AL.xml</parameter>
+                    </Configuration>
+                    <Parser>
+                        <InheritFrom>system:/Parsers/ibmdi.XML2</InheritFrom>
+                        <parameter name="entry.tag"/>
+                    </Parser>
+                    <AttributeMap name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                        <AttributeMapItem>
+                            <Name>*</Name>
+                            <Type>simple</Type>
+                            <Simple>*</Simple>
+                        </AttributeMapItem>
+                    </AttributeMap>
+                    <AttributeMap name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </AttributeMap>
+                    <DeltaSettings>
+                        <WhenToCommit>After every database operation</WhenToCommit>
+                        <RowLocking>SERIALIZABLE</RowLocking>
+                        <ChangeDetectionMode>DETECT_ALL</ChangeDetectionMode>
+                    </DeltaSettings>
+                    <Schema name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                    <Schema name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                    <LinkCriteria>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </LinkCriteria>
+                    <Hooks>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Hooks>
+                    <CheckpointConfig/>
+                    <SandboxConfig/>
+                    <Reconnect>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ReconnectRules/>
+                    </Reconnect>
+                    <Operations/>
+                    <PoolDefinition>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </PoolDefinition>
+                    <PoolInstance/>
+                </Connector>
+                <Script name="Read Organizations">
+                    <ModTime>1642702098396</ModTime>
+                    <parameter name="script"><![CDATA[var list = work.getElementsByTagName("Organisation");
+var orgs = {};
+for(var org in list){
+	var mgrs = org.Managers.getChildNodes();
+	if (mgrs.getLength() == 0) {
+		var mgr = 0;
+	} else {
+		var mgr = mgrs[0].getValue();
+	}
+	orgs[org.Id.getValue()] = {
+		parent: org.ParentId.getValue(),
+		id: org.Id.getValue(),
+		manager: mgr,
+		name: org.Name.getValue(),
+		companycode: org.CompanyCode.getValue()
+	} 
+
+
+}]]></parameter>
+                </Script>
+                <Script name="Process Users">
+                    <ModTime>1643110590388</ModTime>
+                    <parameter name="script"><![CDATA[var list = work.getElementsByTagName("Resource");
+var users = {};
+for(var resource in list){
+	var userId = resource.ResourceId.getValue();
+	users[userId] = {};
+	var user = users[userId];
+	
+	user.resourceId = userId;
+	user.FirstName = resource.FirstName.getValue();
+	user.Surname = resource.Surname.getValue();
+	user.SocialSecurityNumber = resource.SocialSecurityNumber.getValue();
+	orglist = resource.Employments.getChildNodes();
+	
+	// Now to get Title
+	var empList = resource.getElementsByTagName("Employment");
+	if (empList.getLength() > 0) {
+		user.Title = empList[0].PostIdDescription.getValue();
+	}
+
+	// Get email addresses
+	var addr = resource.getElementsByTagName("Address");
+	var emails = addr.EMailList.getChildNodes();
+	if (emails.getLength() > 0) {
+		user.Mail = emails[0].getValue();
+	}
+
+	// Get department
+	var deptList = resource.getElementsByTagName("Relation");
+	for (var dept in deptList) {
+		if (dept.@ElementType == "ORGANIZATIONAL_UNIT") {
+			user.DepartmentId = dept.Value.getValue();
+			user.DepartmentName = dept.Description.getValue();
+		}
+	}
+	
+	// Set manager
+	var org = orgs[user.DepartmentId];
+	if (typeof org == "undefined") {
+		log.error("************ Undefined org (" + user.departmentId 
+			+ ") for user " + user.FirstName + " " + user.Surname);
+	} else {
+		user.ManagerId = org.manager;
+	}
+}]]></parameter>
+                </Script>
+                <Script name="Set more manager info">
+                    <ModTime>1643110577339</ModTime>
+                    <parameter name="script"><![CDATA[for (var userId in users) {
+	var user = users[userId];
+	var mgr = users[user.ManagerId];
+	
+	if (typeof mgr == "undefined") {
+		log.error("************ Undefined manager (" + user.ManagerId 
+			+ ") for user " + user.FirstName + " " + user.Surname);
+		continue;
+	}
+	user.ManagerName = mgr.FullName + " " + mgr.Surname;
+	user.ManagerEmail = mgr.Mail;	
+}]]></parameter>
+                </Script>
+                <Script name="Map to AD">
+                    <ModTime>1643110565264</ModTime>
+                    <parameter name="script"><![CDATA[for (var userId in users) {
+	var user = users[userId];
+	log.msg(work.fromJSON(toJson(user)));
+}]]></parameter>
+                </Script>
+            </ContainerDF>
+            <ThreadOptions/>
+            <Operations/>
+            <InitParams>
+                <Schema name="AssemblyLineInitParams"/>
+            </InitParams>
+        </AssemblyLine>
+    </Folder>
+    <Folder name="Connectors"/>
+    <Folder name="Parsers"/>
+    <Folder name="Scripts">
+        <Script name="Logger">
+            <ModTime>1643111271611</ModTime>
+            <parameter name="includeFiles"/>
+            <parameter name="script"><![CDATA[_VRS = "20220125 1228"; // Initial version
+
+var Logger = function() {
+	this.alName = task.getShortName();
+	this.errorLog = null;
+	
+	// Initialization method - prints out version
+	this.init = function() {
+		this.msg("Logger v" + _VRS);
+	}
+	
+	// Function to log out a message
+	this.msg = function(lvl, msg) {
+		// Check if no parameter were passed, or only one
+		if (typeof lvl == "undefined") {
+			lvl = "INFO";
+			msg = "";
+		} else
+		if (typeof msg == "undefined") {
+			msg = lvl;
+			lvl = "INFO";
+		}
+		
+		task.logmsg(lvl, msg);
+	}
+	
+	// For logging errors
+	this.error = function(msg) {
+		this.msg("ERROR", msg);
+		
+		if (this.errorLog == null) {
+			this.errorLog = system.openFileForOutput("logs/" + this.alName + "_error.log");
+		}
+		
+		this.errorLog.write(msg);
+		this.errorLog.newLine();
+		this.errorLog.flush();
+	}
+	
+	// Init code
+	this.init();
+}
+
+var log = new Logger();]]></parameter>
+        </Script>
+        <Script name="Mapper">
+            <ModTime>1643112193011</ModTime>
+            <parameter name="includeFiles"/>
+            <parameter name="script"><![CDATA[// Must load Logger before this script!!
+
+_VRS = "20220125 1255"; // Initial version
+
+var Mapper = function(mappingFileName) {
+	this.mappingFileName = mappingFileName || null;
+	this.map = {};
+	
+	// Initialization method - prints out version
+	this.init = function() {
+		log.msg("Mapper v" + _VRS);
+		
+		this.readInMappingFile();
+	}
+	
+	// Reads in the mapping file
+	this.readInMappingFile = function() {
+		if (this.mappingFileName == null) {
+			throw "No mapping file specified in constructor to Mapper";
+		}
+		
+		//Read mapping file
+		var file = system.openFileForInput(this.mappingFileName);
+		this.map = {};
+		while((line = file.readLine()) != null) {
+			var parts = line.split("=");
+			if (parts.length == 2) {
+				this.map[parts[0].trim()] = parts[1].trim();
+			}
+		}
+
+	}
+	
+	// Init code
+	this.init();
+}]]></parameter>
+        </Script>
+    </Folder>
+    <JavaLibraries/>
+    <JavaProperties/>
+    <Folder name="Includes"/>
+    <Folder name="Config">
+        <LogConfig name="Logging"/>
+        <InstanceProperties name="AutoStart">
+            <AutoStart/>
+        </InstanceProperties>
+        <TombstonesConfig name="Tombstones"/>
+        <SolutionInterface name="SolutionInterface">
+            <ModTime>1643109988742</ModTime>
+            <InstanceID>BrukerGruppeSync</InstanceID>
+            <enabled>true</enabled>
+        </SolutionInterface>
+    </Folder>
+    <Folder name="Functions"/>
+    <Folder name="AttributeMaps"/>
+    <Properties name="Properties">
+        <Stores>
+            <PropertyStore name="Solution-Properties">
+                <Parser/>
+                <RawConnector>
+                    <InheritFrom>system:/Connectors/ibmdi.Properties</InheritFrom>
+                    <parameter name="collectionType">Solution-Properties</parameter>
+                </RawConnector>
+                <Key>key</Key>
+                <Value>value</Value>
+                <ReadOnly>false</ReadOnly>
+                <InitialLoad>true</InitialLoad>
+                <CacheTimeout>0</CacheTimeout>
+            </PropertyStore>
+            <PropertyStore name="Global-Properties">
+                <Parser/>
+                <RawConnector>
+                    <InheritFrom>system:/Connectors/ibmdi.Properties</InheritFrom>
+                    <parameter name="collectionType">Global-Properties</parameter>
+                </RawConnector>
+                <Key>key</Key>
+                <Value>value</Value>
+                <ReadOnly>false</ReadOnly>
+                <InitialLoad>true</InitialLoad>
+                <CacheTimeout>0</CacheTimeout>
+            </PropertyStore>
+            <PropertyStore name="System-Properties">
+                <Parser/>
+                <RawConnector>
+                    <InheritFrom>system:/Connectors/ibmdi.Properties</InheritFrom>
+                    <parameter name="collectionType">System-Properties</parameter>
+                </RawConnector>
+                <Key>key</Key>
+                <Value>value</Value>
+                <ReadOnly>false</ReadOnly>
+                <InitialLoad>true</InitialLoad>
+                <CacheTimeout>0</CacheTimeout>
+            </PropertyStore>
+            <PropertyStore name="Java-Properties">
+                <Parser/>
+                <RawConnector>
+                    <InheritFrom>system:/Connectors/ibmdi.Properties</InheritFrom>
+                    <parameter name="collection">@SUBSTITUTE{config.$directory}/BrukerGruppeSync.properties</parameter>
+                    <parameter name="collectionType">Java-Properties</parameter>
+                </RawConnector>
+                <Key>key</Key>
+                <Value>value</Value>
+                <ReadOnly>false</ReadOnly>
+                <InitialLoad>true</InitialLoad>
+                <CacheTimeout>0</CacheTimeout>
+            </PropertyStore>
+            <PropertyStore name="BrukerGruppeSync">
+                <Parser/>
+                <RawConnector>
+                    <InheritFrom>system:/Connectors/ibmdi.Properties</InheritFrom>
+                    <parameter name="collection">@SUBSTITUTE{config.$directory}/BrukerGruppeSync.properties</parameter>
+                    <parameter name="collectionType">BrukerGruppeSync</parameter>
+                </RawConnector>
+                <Key>key</Key>
+                <Value>value</Value>
+                <ReadOnly>false</ReadOnly>
+                <InitialLoad>true</InitialLoad>
+                <CacheTimeout>0</CacheTimeout>
+            </PropertyStore>
+        </Stores>
+    </Properties>
+    <Folder name="Schedules"/>
+    <Folder name="Sequences"/>
+</MetamergeConfig>
