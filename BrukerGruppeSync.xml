@@ -1,14 +1,16 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig IDIversion="Created by SDI7.2 - 2019-07-08" created="Tue Jan 25 12:25:42 CET 2022" createdBy="Eddie Hartman" modified="Tue Jan 25 21:07:48 CET 2022" modifiedBy="Eddie Hartman" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig IDIversion="Created by SDI7.2 - 2019-07-08" created="Tue Jan 25 12:25:42 CET 2022" createdBy="Eddie Hartman" modified="Fri Jan 28 13:37:51 CET 2022" modifiedBy="Eddie Hartman" version="7.1.1">
     <Folder name="AssemblyLines">
         <AssemblyLine name="BrukerGruppeSync">
-            <ModTime>1643112140960</ModTime>
+            <ModTime>1643372697130</ModTime>
             <Settings>
                 <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
                 <parameter name="automapattributes">false</parameter>
                 <parameter name="createTombstones">false</parameter>
                 <parameter name="includeGlobalPrologs">true</parameter>
                 <parameter name="includePrologs"><![CDATA[Logger
-Mapper]]></parameter>
+Mapper
+ScriptLib
+]]></parameter>
                 <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
             </Settings>
             <Hooks>
@@ -30,20 +32,20 @@ Mapper]]></parameter>
             <LogConfig/>
             <ContainerEF name="EntryFeedContainer"/>
             <ContainerDF name="DataFlowContainer">
-                <ModTime>1643112140960</ModTime>
+                <ModTime>1643372697130</ModTime>
                 <Script name="Read in map">
                     <ModTime>1643112140960</ModTime>
                     <parameter name="script">var map = new Mapper("BrukerGruppeSync/mapping_resource.map");</parameter>
                 </Script>
                 <Connector name="Agresso Stamdata">
                     <InheritFrom>system:/Connectors/ibmdi.FileSystem</InheritFrom>
-                    <ModTime>1643110038715</ModTime>
+                    <ModTime>1643141783739</ModTime>
                     <ConnectorMode>Iterator</ConnectorMode>
                     <ConnectorState>Enabled</ConnectorState>
                     <Configuration>
                         <InheritFrom>[parent]</InheritFrom>
-                        <ModTime>1643110038715</ModTime>
-                        <parameter name="filePath">BrukerGruppeSync/Stamdata3_FSI_AL.xml</parameter>
+                        <ModTime>1643141783739</ModTime>
+                        <parameter name="filePath">_data/Stamdata3_FSI_AL.xml</parameter>
                     </Configuration>
                     <Parser>
                         <InheritFrom>system:/Parsers/ibmdi.XML2</InheritFrom>
@@ -90,8 +92,244 @@ Mapper]]></parameter>
                     <PoolInstance/>
                 </Connector>
                 <Script name="Read Organizations">
-                    <ModTime>1642702098396</ModTime>
-                    <parameter name="script"><![CDATA[var list = work.getElementsByTagName("Organisation");
+                    <ModTime>1643201870935</ModTime>
+                    <parameter name="script"><![CDATA[stamdata = work.clone();
+var list = stamdata.getElementsByTagName("Organisation");
+var orgs = {};
+for(var org in list){
+	var mgrs = org.Managers.getChildNodes();
+	if (mgrs.getLength() == 0) {
+		var mgr = 0;
+	} else {
+		var mgr = mgrs[0].getValue();
+	}
+	orgs[org.Id.getValue()] = {
+		parent: org.ParentId.getValue(),
+		id: org.Id.getValue(),
+		manager: mgr,
+		name: org.Name.getValue(),
+		companycode: org.CompanyCode.getValue(),
+		status: org.Status.getValue()
+	} 
+
+
+}]]></parameter>
+                </Script>
+                <Script name="Process Users">
+                    <ModTime>1643372697130</ModTime>
+                    <parameter name="script"><![CDATA[var list = stamdata.getElementsByTagName("Resource");
+var users = {};
+for(var resource in list){
+	var userId = resource.ResourceId.getValue();
+	users[userId] = {};
+	var user = users[userId];
+	
+	user.ResourceID = userId;
+	user.givenName = resource.FirstName.getValue();
+	user.sn = resource.Surname.getValue();
+	user.SSN = resource.SocialSecurityNumber.getValue();
+	
+	// Now to get some of the most recent Employment data
+	var empList = resource.getElementsByTagName("Employment");
+	for (var emp in empList) {
+		if (emp.MainPosition.getValue() != "true" || // only the main position
+			emp.DateTo.getValue() < user.DateTo) {   // and the latest one (all users have one Main, as far as I could see) 
+			continue;
+		}
+		user.Title = emp.PostCodeDescription.getValue();
+		user.Type = emp.EmploymentType.getValue();
+		user.Active = isActive(user);
+		user.Percentage = emp.Percentage.getValue();
+		user.EmpResourceId = emp.@ResourceId.getValue();
+		user.PostIdDescription = emp.PostIdDescription.getValue();
+		user.MainPos = emp.MainPosition.getValue();
+		user.DateTo = emp.dateTo.getValue();
+
+		// Get Ansvar
+		var relList = emp.Relations.getChildNodes();
+		var lastToDate = "";
+		for (var rel in relList) {
+			if (rel.@Name != "Ansvar" || 
+				(rel.ToDate && rel.ToDate.getValue() < lastToDate)) {
+				continue;
+			}
+			if (rel.ToDate) lastToDate = rel.ToDate.getValue();
+			user.Ansvar = rel.Value.getValue();
+			user.OtherPostIDs = rel.Description.getValue();
+		}
+	}
+	
+	// Now for OtherPostIDs
+	var otherPostIDs = [];
+	for (emp in empList) {
+		var postID = "";
+		// Get Ansvar
+		var relList = emp.Relations.getChildNodes();
+		for (var rel in relList) {
+			if (rel.@Name == "Ansvar") {
+				postID = "Arbeidssted=" + rel.Value.getValue();
+			} else
+			if (rel.@Name == "Arbeidstid pr. uke") {
+				postID += "=" + (37.5/new java.lang.Double(rel.Value.getValue().replace(",",".")))*100 + "%";
+			}
+		}
+		otherPostIDs.push(postID + "=" + emp.PostIdDescription);
+	}
+	user.OtherPostIDs = otherPostIDs.join("=");
+
+	// Get email addresses
+	var addr = resource.getElementsByTagName("Address");
+	var emails = addr.EMailList.getChildNodes();
+	if (emails.getLength() > 0) {
+		user.Mail = emails[0].getValue();
+	}
+
+	// Get department
+	var deptList = resource.getElementsByTagName("Relation");
+	for (var dept in deptList) {
+		if (dept.@ElementType == "ORGANIZATIONAL_UNIT") {
+			user.DepartmentId = dept.Value.getValue();
+			user.DepartmentName = dept.Description.getValue();
+			user.FromDate = dept.DateFrom.getValue();
+			user.ToDate = dept.DateTo.getValue();
+		}
+	}
+	
+	// Set manager
+	var org = orgs[user.DepartmentId];
+	if (typeof org == "undefined") {
+		log.error("************ Undefined org (" + user.departmentId 
+			+ ") for user " + userInfo(user));
+	} else {
+		user.ManagerId = org.manager;
+	}
+}]]></parameter>
+                </Script>
+                <Script name="Set more manager info">
+                    <ModTime>1643203740661</ModTime>
+                    <parameter name="script"><![CDATA[for (var userId in users) {
+	var user = users[userId];
+	var mgr = users[user.ManagerId];
+	
+	if (typeof mgr == "undefined") {
+//		log.error("************ Undefined manager (" + user.ManagerId 
+//			+ ") for user " + userInfo(user));
+		continue;
+	}
+	user.ManagerName = mgr.FirstName + " " + mgr.Surname;
+	user.ManagerEmail = mgr.Mail;	
+}]]></parameter>
+                </Script>
+                <Script name="Map to AD">
+                    <ModTime>1643367577415</ModTime>
+                    <parameter name="script"><![CDATA[for (var userId in users) {
+	var user = users[userId];
+	if (user.resourceId != "58464") continue;
+	log.msg(entryStr(work.fromJSON(toJson(user))));
+}]]></parameter>
+                </Script>
+            </ContainerDF>
+            <ThreadOptions/>
+            <Operations/>
+            <InitParams>
+                <Schema name="AssemblyLineInitParams"/>
+            </InitParams>
+        </AssemblyLine>
+    <AssemblyLine name="BrukerGruppeSync_analysis">
+            <ModTime>1643371386561</ModTime>
+            <Settings>
+                <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+                <parameter name="automapattributes">false</parameter>
+                <parameter name="createTombstones">false</parameter>
+                <parameter name="includeGlobalPrologs">true</parameter>
+                <parameter name="includePrologs"><![CDATA[Logger
+Mapper
+ScriptLib
+]]></parameter>
+                <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+            </Settings>
+            <Hooks>
+                <ModTime>1642763283974</ModTime>
+            </Hooks>
+            <CheckpointConfig/>
+            <SandboxConfig/>
+            <SimulationConfig>
+                <SimulationStates>
+                    <Component name="Read in map" state="Enabled"/>
+                    <Component name="Agresso Stamdata" state="Enabled"/>
+                    <Component name="Read Organizations" state="Enabled"/>
+                    <Component name="Process Users" state="Enabled"/>
+                    <Component name="Set more manager info" state="Enabled"/>
+                    <Component name="Map to AD" state="Enabled"/>
+                </SimulationStates>
+                <ProxySettings/>
+            </SimulationConfig>
+            <LogConfig/>
+            <ContainerEF name="EntryFeedContainer"/>
+            <ContainerDF name="DataFlowContainer">
+                <ModTime>1643371386561</ModTime>
+                <Script name="Read in map">
+                    <ModTime>1643112140960</ModTime>
+                    <parameter name="script">var map = new Mapper("BrukerGruppeSync/mapping_resource.map");</parameter>
+                </Script>
+                <Connector name="Agresso Stamdata">
+                    <InheritFrom>system:/Connectors/ibmdi.FileSystem</InheritFrom>
+                    <ModTime>1643141783739</ModTime>
+                    <ConnectorMode>Iterator</ConnectorMode>
+                    <ConnectorState>Enabled</ConnectorState>
+                    <Configuration>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1643141783739</ModTime>
+                        <parameter name="filePath">_data/Stamdata3_FSI_AL.xml</parameter>
+                    </Configuration>
+                    <Parser>
+                        <InheritFrom>system:/Parsers/ibmdi.XML2</InheritFrom>
+                        <parameter name="entry.tag"/>
+                    </Parser>
+                    <AttributeMap name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                        <AttributeMapItem>
+                            <Name>*</Name>
+                            <Type>simple</Type>
+                            <Simple>*</Simple>
+                        </AttributeMapItem>
+                    </AttributeMap>
+                    <AttributeMap name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </AttributeMap>
+                    <DeltaSettings>
+                        <WhenToCommit>After every database operation</WhenToCommit>
+                        <RowLocking>SERIALIZABLE</RowLocking>
+                        <ChangeDetectionMode>DETECT_ALL</ChangeDetectionMode>
+                    </DeltaSettings>
+                    <Schema name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                    <Schema name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                    <LinkCriteria>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </LinkCriteria>
+                    <Hooks>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Hooks>
+                    <CheckpointConfig/>
+                    <SandboxConfig/>
+                    <Reconnect>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ReconnectRules/>
+                    </Reconnect>
+                    <Operations/>
+                    <PoolDefinition>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </PoolDefinition>
+                    <PoolInstance/>
+                </Connector>
+                <Script name="Read Organizations">
+                    <ModTime>1643141900972</ModTime>
+                    <parameter name="script"><![CDATA[stamdata = work.clone();
+var list = stamdata.getElementsByTagName("Organisation");
 var orgs = {};
 for(var org in list){
 	var mgrs = org.Managers.getChildNodes();
@@ -112,8 +350,8 @@ for(var org in list){
 }]]></parameter>
                 </Script>
                 <Script name="Process Users">
-                    <ModTime>1643110590388</ModTime>
-                    <parameter name="script"><![CDATA[var list = work.getElementsByTagName("Resource");
+                    <ModTime>1643371386561</ModTime>
+                    <parameter name="script"><![CDATA[var list = stamdata.getElementsByTagName("Resource");
 var users = {};
 for(var resource in list){
 	var userId = resource.ResourceId.getValue();
@@ -126,10 +364,32 @@ for(var resource in list){
 	user.SocialSecurityNumber = resource.SocialSecurityNumber.getValue();
 	orglist = resource.Employments.getChildNodes();
 	
+	
 	// Now to get Title
+	var cnt = 0;
 	var empList = resource.getElementsByTagName("Employment");
-	if (empList.getLength() > 0) {
-		user.Title = empList[0].PostIdDescription.getValue();
+	for (var emp in empList) {
+		if (emp.MainPosition.getValue() != "true" || // only the main position
+			emp.DateTo.getValue() < user.DateTo) {   // and the latest one (is this correct? 
+			continue;
+		}
+	}
+	
+	if (cnt < 2) continue;
+	log.msg(userInfo(user, " -> " + cnt));
+	continue;
+	
+	
+	for (emp in empList) {
+		if (emp.MainPosition.getValue() != "true") {
+			continue;
+		}
+		user.Title = emp.PostCodeDescription.getValue();
+		user.Type = emp.EmploymentType.getValue();
+		user.Percentage = emp.Percentage.getValue();
+		user.EmpResourceId = emp.@ResourceId.getValue();
+		user.PostIdDescription = emp.PostIdDescription.getValue();
+		user.MainPos = emp.MainPosition.getValue();
 	}
 
 	// Get email addresses
@@ -145,6 +405,8 @@ for(var resource in list){
 		if (dept.@ElementType == "ORGANIZATIONAL_UNIT") {
 			user.DepartmentId = dept.Value.getValue();
 			user.DepartmentName = dept.Description.getValue();
+			user.FromDate = dept.DateFrom.getValue();
+			user.ToDate = dept.DateTo.getValue();
 		}
 	}
 	
@@ -152,29 +414,31 @@ for(var resource in list){
 	var org = orgs[user.DepartmentId];
 	if (typeof org == "undefined") {
 		log.error("************ Undefined org (" + user.departmentId 
-			+ ") for user " + user.FirstName + " " + user.Surname);
+			+ ") for user " + userInfo(user));
 	} else {
 		user.ManagerId = org.manager;
 	}
 }]]></parameter>
                 </Script>
                 <Script name="Set more manager info">
-                    <ModTime>1643110577339</ModTime>
+                    <ModTime>1643200014326</ModTime>
+                    <parameter name="enabled">false</parameter>
                     <parameter name="script"><![CDATA[for (var userId in users) {
 	var user = users[userId];
 	var mgr = users[user.ManagerId];
 	
 	if (typeof mgr == "undefined") {
 		log.error("************ Undefined manager (" + user.ManagerId 
-			+ ") for user " + user.FirstName + " " + user.Surname);
+			+ ") for user " + userInfo(user));
 		continue;
 	}
-	user.ManagerName = mgr.FullName + " " + mgr.Surname;
+	user.ManagerName = mgr.FirstName + " " + mgr.Surname;
 	user.ManagerEmail = mgr.Mail;	
 }]]></parameter>
                 </Script>
                 <Script name="Map to AD">
-                    <ModTime>1643110565264</ModTime>
+                    <ModTime>1643200016666</ModTime>
+                    <parameter name="enabled">false</parameter>
                     <parameter name="script"><![CDATA[for (var userId in users) {
 	var user = users[userId];
 	log.msg(work.fromJSON(toJson(user)));
@@ -187,8 +451,587 @@ for(var resource in list){
                 <Schema name="AssemblyLineInitParams"/>
             </InitParams>
         </AssemblyLine>
+    <AssemblyLine name="ReadGroupFile">
+            <ModTime>1643225032314</ModTime>
+            <Settings/>
+            <Hooks/>
+            <CheckpointConfig/>
+            <SandboxConfig/>
+            <SimulationConfig>
+                <SimulationStates>
+                    <Component name="DumpWorkEntry" state="Enabled"/>
+                    <Component name="GroupFile" state="Enabled"/>
+                </SimulationStates>
+                <ProxySettings/>
+            </SimulationConfig>
+            <LogConfig/>
+            <ContainerEF name="EntryFeedContainer">
+                <ModTime>1643225032314</ModTime>
+                <Connector name="GroupFile">
+                    <InheritFrom>system:/Connectors/ibmdi.FileSystem</InheritFrom>
+                    <ModTime>1643225032314</ModTime>
+                    <ConnectorMode>Iterator</ConnectorMode>
+                    <ConnectorState>Enabled</ConnectorState>
+                    <Configuration>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1643224921292</ModTime>
+                        <parameter name="filePath">_data/GrupperConfig.txt</parameter>
+                    </Configuration>
+                    <Parser>
+                        <InheritFrom>system:/Parsers/ibmdi.CSV</InheritFrom>
+                        <ModTime>1643225032314</ModTime>
+                        <parameter name="csvColumns"><![CDATA[Code
+DN]]></parameter>
+                    </Parser>
+                    <AttributeMap name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1643224963233</ModTime>
+                        <AttributeMapItem>
+                            <Name>*</Name>
+                            <Type>simple</Type>
+                            <Simple>*</Simple>
+                        </AttributeMapItem>
+                    </AttributeMap>
+                    <AttributeMap name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1643224866506</ModTime>
+                    </AttributeMap>
+                    <DeltaSettings>
+                        <ModTime>1643224876491</ModTime>
+                        <WhenToCommit>After every database operation</WhenToCommit>
+                        <RowLocking>SERIALIZABLE</RowLocking>
+                        <ChangeDetectionMode>DETECT_ALL</ChangeDetectionMode>
+                    </DeltaSettings>
+                    <Schema name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1643224927182</ModTime>
+                        <SchemaItem>
+                            <Name>CN=Menyas,OU=Grupper,OU=Adminnett</Name>
+                            <Syntax>java.lang.String</Syntax>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>everyone</Name>
+                            <Syntax>java.lang.String</Syntax>
+                        </SchemaItem>
+                    </Schema>
+                    <Schema name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1643224927182</ModTime>
+                        <SchemaItem>
+                            <Name>CN=Menyas,OU=Grupper,OU=Adminnett</Name>
+                            <Syntax>java.lang.String</Syntax>
+                        </SchemaItem>
+                        <SchemaItem>
+                            <Name>everyone</Name>
+                            <Syntax>java.lang.String</Syntax>
+                        </SchemaItem>
+                    </Schema>
+                    <LinkCriteria>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1643224866506</ModTime>
+                    </LinkCriteria>
+                    <Hooks>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1643224866506</ModTime>
+                    </Hooks>
+                    <CheckpointConfig/>
+                    <SandboxConfig/>
+                    <Reconnect>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ReconnectRules/>
+                    </Reconnect>
+                    <Operations/>
+                    <PoolDefinition>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </PoolDefinition>
+                    <PoolInstance/>
+                </Connector>
+            </ContainerEF>
+            <ContainerDF name="DataFlowContainer">
+                <ModTime>1643224876491</ModTime>
+                <Script name="DumpWorkEntry">
+                    <ModTime>1643224950998</ModTime>
+                    <parameter name="script"><![CDATA[// Dump the work entry
+task.dumpEntry(work);
+]]></parameter>
+                </Script>
+            </ContainerDF>
+            <ThreadOptions/>
+            <Operations/>
+            <InitParams>
+                <Schema name="AssemblyLineInitParams"/>
+            </InitParams>
+        </AssemblyLine>
+        <AssemblyLine name="ReadResultFile">
+            <ModTime>1643372685070</ModTime>
+            <Settings>
+                <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+                <parameter name="automapattributes">false</parameter>
+                <parameter name="createTombstones">false</parameter>
+                <parameter name="includeGlobalPrologs">true</parameter>
+                <parameter name="includePrologs">Logger</parameter>
+                <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+            </Settings>
+            <Hooks/>
+            <CheckpointConfig/>
+            <SandboxConfig/>
+            <SimulationConfig>
+                <SimulationStates>
+                    <Component name="DumpWorkEntry" state="Enabled"/>
+                    <Component name="ResultFile" state="Enabled"/>
+                </SimulationStates>
+                <ProxySettings/>
+            </SimulationConfig>
+            <LogConfig/>
+            <ContainerEF name="EntryFeedContainer">
+                <ModTime>1643225215981</ModTime>
+                <Connector name="ResultFile">
+                    <InheritFrom>system:/Connectors/ibmdi.FileSystem</InheritFrom>
+                    <ModTime>1643225215981</ModTime>
+                    <ConnectorMode>Iterator</ConnectorMode>
+                    <ConnectorState>Enabled</ConnectorState>
+                    <Configuration>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1643225206942</ModTime>
+                        <parameter name="filePath">BrukerGruppeSync/ResultFile_220120_02_00.csv</parameter>
+                    </Configuration>
+                    <Parser>
+                        <InheritFrom>system:/Parsers/ibmdi.CSV</InheritFrom>
+                        <ModTime>1643225210938</ModTime>
+                    </Parser>
+                    <AttributeMap name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1643225215981</ModTime>
+                        <AttributeMapItem>
+                            <Name>*</Name>
+                            <Type>simple</Type>
+                            <Simple>*</Simple>
+                        </AttributeMapItem>
+                    </AttributeMap>
+                    <AttributeMap name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1643225164392</ModTime>
+                    </AttributeMap>
+                    <DeltaSettings>
+                        <ModTime>1643225170680</ModTime>
+                        <WhenToCommit>After every database operation</WhenToCommit>
+                        <RowLocking>SERIALIZABLE</RowLocking>
+                        <ChangeDetectionMode>DETECT_ALL</ChangeDetectionMode>
+                    </DeltaSettings>
+                    <Schema name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1643225164392</ModTime>
+                    </Schema>
+                    <Schema name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1643225164392</ModTime>
+                    </Schema>
+                    <LinkCriteria>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1643225164392</ModTime>
+                    </LinkCriteria>
+                    <Hooks>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1643225164392</ModTime>
+                    </Hooks>
+                    <CheckpointConfig/>
+                    <SandboxConfig/>
+                    <Reconnect>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ReconnectRules/>
+                    </Reconnect>
+                    <Operations/>
+                    <PoolDefinition>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </PoolDefinition>
+                    <PoolInstance/>
+                </Connector>
+            </ContainerEF>
+            <ContainerDF name="DataFlowContainer">
+                <ModTime>1643372685070</ModTime>
+                <Script name="DumpWorkEntry">
+                    <ModTime>1643372685070</ModTime>
+                    <parameter name="script"><![CDATA[// Dump the work entry
+//task.dumpEntry(work);
+log.msg(work.ResourceID + " " + work.Groups);]]></parameter>
+                </Script>
+            </ContainerDF>
+            <ThreadOptions/>
+            <Operations/>
+            <InitParams>
+                <Schema name="AssemblyLineInitParams"/>
+            </InitParams>
+        </AssemblyLine>
+    <AssemblyLine name="ReadTypesFile">
+            <ModTime>1643228167660</ModTime>
+            <Settings/>
+            <Hooks/>
+            <CheckpointConfig/>
+            <SandboxConfig/>
+            <SimulationConfig>
+                <SimulationStates>
+                    <Component name="DumpWorkEntry" state="Enabled"/>
+                    <Component name="ActiveTypes" state="Enabled"/>
+                </SimulationStates>
+                <ProxySettings/>
+            </SimulationConfig>
+            <LogConfig/>
+            <ContainerEF name="EntryFeedContainer">
+                <Connector name="ActiveTypes">
+                    <InheritFrom>/Connectors/ActiveTypes</InheritFrom>
+                    <ModTime>1643228167660</ModTime>
+                    <ConnectorMode>Iterator</ConnectorMode>
+                    <ConnectorState>Enabled</ConnectorState>
+                    <Configuration>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Configuration>
+                    <Parser>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Parser>
+                    <AttributeMap name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </AttributeMap>
+                    <AttributeMap name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </AttributeMap>
+                    <DeltaSettings>
+                        <ModTime>1643228167660</ModTime>
+                        <WhenToCommit>After every database operation</WhenToCommit>
+                        <RowLocking>SERIALIZABLE</RowLocking>
+                        <ChangeDetectionMode>DETECT_ALL</ChangeDetectionMode>
+                    </DeltaSettings>
+                    <Schema name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                    <Schema name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                    <LinkCriteria>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </LinkCriteria>
+                    <Hooks>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Hooks>
+                    <CheckpointConfig/>
+                    <SandboxConfig/>
+                    <Reconnect>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ReconnectRules/>
+                    </Reconnect>
+                    <Operations/>
+                    <PoolDefinition>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </PoolDefinition>
+                    <PoolInstance/>
+                </Connector>
+            </ContainerEF>
+            <ContainerDF name="DataFlowContainer">
+                <ModTime>1643228167660</ModTime>
+                <Script name="DumpWorkEntry">
+                    <ModTime>1643228173294</ModTime>
+                    <parameter name="script"><![CDATA[// Dump the work entry
+task.dumpEntry(work);
+]]></parameter>
+                </Script>
+            </ContainerDF>
+            <ThreadOptions/>
+            <Operations/>
+            <InitParams>
+                <Schema name="AssemblyLineInitParams"/>
+            </InitParams>
+        </AssemblyLine>
+    <AssemblyLine name="BrukerGruppeSync 20220128 1322">
+            <ModTime>1643372499009</ModTime>
+            <Settings>
+                <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+                <parameter name="automapattributes">false</parameter>
+                <parameter name="createTombstones">false</parameter>
+                <parameter name="includeGlobalPrologs">true</parameter>
+                <parameter name="includePrologs"><![CDATA[Logger
+Mapper
+ScriptLib
+]]></parameter>
+                <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+            </Settings>
+            <Hooks>
+                <ModTime>1642763283974</ModTime>
+            </Hooks>
+            <CheckpointConfig/>
+            <SandboxConfig/>
+            <SimulationConfig>
+                <SimulationStates>
+                    <Component name="Read in map" state="Enabled"/>
+                    <Component name="Agresso Stamdata" state="Enabled"/>
+                    <Component name="Read Organizations" state="Enabled"/>
+                    <Component name="Process Users" state="Enabled"/>
+                    <Component name="Set more manager info" state="Enabled"/>
+                    <Component name="Map to AD" state="Enabled"/>
+                </SimulationStates>
+                <ProxySettings/>
+            </SimulationConfig>
+            <LogConfig/>
+            <ContainerEF name="EntryFeedContainer"/>
+            <ContainerDF name="DataFlowContainer">
+                <ModTime>1643372499009</ModTime>
+                <Script name="Read in map">
+                    <ModTime>1643112140960</ModTime>
+                    <parameter name="script">var map = new Mapper("BrukerGruppeSync/mapping_resource.map");</parameter>
+                </Script>
+                <Connector name="Agresso Stamdata">
+                    <InheritFrom>system:/Connectors/ibmdi.FileSystem</InheritFrom>
+                    <ModTime>1643141783739</ModTime>
+                    <ConnectorMode>Iterator</ConnectorMode>
+                    <ConnectorState>Enabled</ConnectorState>
+                    <Configuration>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1643141783739</ModTime>
+                        <parameter name="filePath">_data/Stamdata3_FSI_AL.xml</parameter>
+                    </Configuration>
+                    <Parser>
+                        <InheritFrom>system:/Parsers/ibmdi.XML2</InheritFrom>
+                        <parameter name="entry.tag"/>
+                    </Parser>
+                    <AttributeMap name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                        <AttributeMapItem>
+                            <Name>*</Name>
+                            <Type>simple</Type>
+                            <Simple>*</Simple>
+                        </AttributeMapItem>
+                    </AttributeMap>
+                    <AttributeMap name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </AttributeMap>
+                    <DeltaSettings>
+                        <WhenToCommit>After every database operation</WhenToCommit>
+                        <RowLocking>SERIALIZABLE</RowLocking>
+                        <ChangeDetectionMode>DETECT_ALL</ChangeDetectionMode>
+                    </DeltaSettings>
+                    <Schema name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                    <Schema name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                    <LinkCriteria>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </LinkCriteria>
+                    <Hooks>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Hooks>
+                    <CheckpointConfig/>
+                    <SandboxConfig/>
+                    <Reconnect>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ReconnectRules/>
+                    </Reconnect>
+                    <Operations/>
+                    <PoolDefinition>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </PoolDefinition>
+                    <PoolInstance/>
+                </Connector>
+                <Script name="Read Organizations">
+                    <ModTime>1643201870935</ModTime>
+                    <parameter name="script"><![CDATA[stamdata = work.clone();
+var list = stamdata.getElementsByTagName("Organisation");
+var orgs = {};
+for(var org in list){
+	var mgrs = org.Managers.getChildNodes();
+	if (mgrs.getLength() == 0) {
+		var mgr = 0;
+	} else {
+		var mgr = mgrs[0].getValue();
+	}
+	orgs[org.Id.getValue()] = {
+		parent: org.ParentId.getValue(),
+		id: org.Id.getValue(),
+		manager: mgr,
+		name: org.Name.getValue(),
+		companycode: org.CompanyCode.getValue(),
+		status: org.Status.getValue()
+	} 
+
+
+}]]></parameter>
+                </Script>
+                <Script name="Process Users">
+                    <ModTime>1643372499009</ModTime>
+                    <parameter name="script"><![CDATA[var list = stamdata.getElementsByTagName("Resource");
+var users = {};
+for(var resource in list){
+	var userId = resource.ResourceId.getValue();
+	users[userId] = {};
+	var user = users[userId];
+	
+	user.resourceId = userId;
+	user.givenName = resource.FirstName.getValue();
+	user.sn = resource.Surname.getValue();
+	user.SSN = resource.SocialSecurityNumber.getValue();
+	
+	// Now to get some of the most recent Employment data
+	var empList = resource.getElementsByTagName("Employment");
+	for (var emp in empList) {
+		if (emp.MainPosition.getValue() != "true" || // only the main position
+			emp.DateTo.getValue() < user.DateTo) {   // and the latest one (all users have one Main, as far as I could see) 
+			continue;
+		}
+		user.Title = emp.PostCodeDescription.getValue();
+		user.Type = emp.EmploymentType.getValue();
+		user.Active = isActive(user);
+		user.Percentage = emp.Percentage.getValue();
+		user.EmpResourceId = emp.@ResourceId.getValue();
+		user.PostIdDescription = emp.PostIdDescription.getValue();
+		user.MainPos = emp.MainPosition.getValue();
+		user.DateTo = emp.dateTo.getValue();
+
+		// Get Ansvar
+		var relList = emp.Relations.getChildNodes();
+		var lastToDate = "";
+		for (var rel in relList) {
+			if (rel.@Name != "Ansvar" || 
+				(rel.ToDate && rel.ToDate.getValue() < lastToDate)) {
+				continue;
+			}
+			if (rel.ToDate) lastToDate = rel.ToDate.getValue();
+			user.Ansvar = rel.Value.getValue();
+			user.OtherPostIDs = rel.Description.getValue();
+		}
+	}
+	
+	// Now for OtherPostIDs
+	var otherPostIDs = [];
+	for (emp in empList) {
+		var postID = "";
+		// Get Ansvar
+		var relList = emp.Relations.getChildNodes();
+		for (var rel in relList) {
+			if (rel.@Name == "Ansvar") {
+				postID = "Arbeidssted=" + rel.Value.getValue();
+			} else
+			if (rel.@Name == "Arbeidstid pr. uke") {
+				postID += "=" + (37.5/new java.lang.Double(rel.Value.getValue().replace(",",".")))*100 + "%";
+			}
+		}
+		otherPostIDs.push(postID + "=" + emp.PostIdDescription);
+	}
+	user.OtherPostIDs = otherPostIDs.join("=");
+	
+
+	// Get email addresses
+	var addr = resource.getElementsByTagName("Address");
+	var emails = addr.EMailList.getChildNodes();
+	if (emails.getLength() > 0) {
+		user.Mail = emails[0].getValue();
+	}
+
+	// Get department
+	var deptList = resource.getElementsByTagName("Relation");
+	for (var dept in deptList) {
+		if (dept.@ElementType == "ORGANIZATIONAL_UNIT") {
+			user.DepartmentId = dept.Value.getValue();
+			user.DepartmentName = dept.Description.getValue();
+			user.FromDate = dept.DateFrom.getValue();
+			user.ToDate = dept.DateTo.getValue();
+		}
+	}
+	
+	// Set manager
+	var org = orgs[user.DepartmentId];
+	if (typeof org == "undefined") {
+		log.error("************ Undefined org (" + user.departmentId 
+			+ ") for user " + userInfo(user));
+	} else {
+		user.ManagerId = org.manager;
+	}
+}]]></parameter>
+                </Script>
+                <Script name="Set more manager info">
+                    <ModTime>1643203740661</ModTime>
+                    <parameter name="script"><![CDATA[for (var userId in users) {
+	var user = users[userId];
+	var mgr = users[user.ManagerId];
+	
+	if (typeof mgr == "undefined") {
+//		log.error("************ Undefined manager (" + user.ManagerId 
+//			+ ") for user " + userInfo(user));
+		continue;
+	}
+	user.ManagerName = mgr.FirstName + " " + mgr.Surname;
+	user.ManagerEmail = mgr.Mail;	
+}]]></parameter>
+                </Script>
+                <Script name="Map to AD">
+                    <ModTime>1643367577415</ModTime>
+                    <parameter name="script"><![CDATA[for (var userId in users) {
+	var user = users[userId];
+	if (user.resourceId != "58464") continue;
+	log.msg(entryStr(work.fromJSON(toJson(user))));
+}]]></parameter>
+                </Script>
+            </ContainerDF>
+            <ThreadOptions/>
+            <Operations/>
+            <InitParams>
+                <Schema name="AssemblyLineInitParams"/>
+            </InitParams>
+        </AssemblyLine>
     </Folder>
-    <Folder name="Connectors"/>
+    <Folder name="Connectors">
+        <Connector name="ActiveTypes">
+            <InheritFrom>system:/Connectors/ibmdi.FileSystem</InheritFrom>
+            <ModTime>1643227409371</ModTime>
+            <ConnectorMode>Iterator</ConnectorMode>
+            <ConnectorState>Enabled</ConnectorState>
+            <Configuration>
+                <InheritFrom>[parent]</InheritFrom>
+                <parameter name="filePath">BrukerGruppeSync/ActiveTypes.txt</parameter>
+            </Configuration>
+            <Parser>
+                <InheritFrom>system:/Parsers/ibmdi.LineReader</InheritFrom>
+                <parameter name="characterSet">UTF-8</parameter>
+            </Parser>
+            <AttributeMap name="Input">
+                <InheritFrom>[parent]</InheritFrom>
+                <AttributeMapItem>
+                    <Name>*</Name>
+                    <Type>simple</Type>
+                    <Simple>*</Simple>
+                </AttributeMapItem>
+            </AttributeMap>
+            <AttributeMap name="Output">
+                <InheritFrom>[parent]</InheritFrom>
+            </AttributeMap>
+            <DeltaSettings>
+                <WhenToCommit>After every database operation</WhenToCommit>
+                <RowLocking>SERIALIZABLE</RowLocking>
+                <ChangeDetectionMode>DETECT_ALL</ChangeDetectionMode>
+            </DeltaSettings>
+            <Schema name="Input">
+                <InheritFrom>[parent]</InheritFrom>
+            </Schema>
+            <Schema name="Output">
+                <InheritFrom>[parent]</InheritFrom>
+            </Schema>
+            <LinkCriteria>
+                <InheritFrom>[parent]</InheritFrom>
+            </LinkCriteria>
+            <Hooks>
+                <InheritFrom>[parent]</InheritFrom>
+            </Hooks>
+            <CheckpointConfig/>
+            <SandboxConfig/>
+            <Reconnect>
+                <InheritFrom>[parent]</InheritFrom>
+                <ReconnectRules/>
+            </Reconnect>
+            <Operations/>
+            <PoolDefinition>
+                <InheritFrom>[parent]</InheritFrom>
+            </PoolDefinition>
+            <PoolInstance/>
+        </Connector>
+    </Folder>
     <Folder name="Parsers"/>
     <Folder name="Scripts">
         <Script name="Logger">
@@ -240,7 +1083,7 @@ var Logger = function() {
 var log = new Logger();]]></parameter>
         </Script>
         <Script name="Mapper">
-            <ModTime>1643112193011</ModTime>
+            <ModTime>1643226056614</ModTime>
             <parameter name="includeFiles"/>
             <parameter name="script"><![CDATA[// Must load Logger before this script!!
 
@@ -272,11 +1115,65 @@ var Mapper = function(mappingFileName) {
 				this.map[parts[0].trim()] = parts[1].trim();
 			}
 		}
-
+		file.close();
 	}
 	
 	// Init code
 	this.init();
+}]]></parameter>
+        </Script>
+    <Script name="ScriptLib">
+            <ModTime>1643228250929</ModTime>
+            <parameter name="includeFiles"/>
+            <parameter name="script"><![CDATA[// Must include AFTER Logger in an AL!!
+
+_VRS = "20200126 1301"; // First implementation
+
+log.msg("ScriptLib v" + _VRS);
+
+function userInfo(user, msg) {
+	var str = user.resourceId + ": " + user.FirstName + " " + user.Surname;
+	if (typeof msg != "undefined" && msg) {
+		str += " - " + msg;
+	}
+	return str;
+}
+
+function entryStr(entry) {
+	var attNames = entry.getAttributeNames();
+	java.util.Arrays.sort(attNames);
+	var str = "\n";
+	for (var name in attNames) {
+		str += " " + name + ": " + entry[name] + "\n";
+	}
+	return str;
+}
+
+_TYPE_CODES = null;
+function isActive(user) {
+	if (!_TYPE_CODES) {
+		// Read in the ActiveTypes.txt file and set the two global variables above
+		_TYPE_CODES = {};
+		var typesFile = system.getConnector("ActiveTypes");
+		typesFile.initialize(null);
+		typesFile.selectEntries();
+		var e = null;
+		while ((e = typesFile.getNextEntry()) != null) {
+			var parts = system.splitString(e.getString("line").trim(), ":");
+			if (parts.length == 2)
+			_TYPE_CODES[parts[0].toLowerCase()] = parts[1];
+		}
+		typesFile.terminate();
+	}
+	
+	if (_TYPE_CODES.active.indexOf(user.Type) >= 0) {
+		return true;
+	} else 
+	if (_TYPE_CODES.inactive.indexOf(user.Type) >= 0) {
+		return false;
+	} else {
+		throw "Invalid type code (" + user.Type + ") for user " + userInfo(user);
+	}
 }]]></parameter>
         </Script>
     </Folder>

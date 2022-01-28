@@ -1,0 +1,2 @@
+Active:ABCDEFGJKLMNOPQRSTUWXÆ
+Inactive:HIVYZ
