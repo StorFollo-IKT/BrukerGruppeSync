@@ -1,14 +1,14 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig IDIversion="Created by SDI7.2 - 2019-07-08" created="Tue Jan 25 12:25:42 CET 2022" createdBy="Eddie Hartman" modified="Fri Jan 28 23:27:49 CET 2022" modifiedBy="Eddie Hartman" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig IDIversion="Created by SDI7.2 - 2019-07-08" created="Tue Jan 25 12:25:42 CET 2022" createdBy="Eddie Hartman" modified="Mon Jan 31 11:22:33 CET 2022" modifiedBy="Eddie Hartman" version="7.1.1">
     <Folder name="AssemblyLines">
         <AssemblyLine name="BrukerGruppeSync">
-            <ModTime>1643408572123</ModTime>
+            <ModTime>1643619234274</ModTime>
             <Settings>
                 <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
                 <parameter name="automapattributes">false</parameter>
                 <parameter name="createTombstones">false</parameter>
                 <parameter name="includeGlobalPrologs">true</parameter>
                 <parameter name="includePrologs"><![CDATA[Logger
-Mapper
+Mailer
 ScriptLib
 ]]></parameter>
                 <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
@@ -25,14 +25,15 @@ ScriptLib
                     <Component name="Read Organizations" state="Enabled"/>
                     <Component name="Process Users" state="Enabled"/>
                     <Component name="Set manager and group" state="Enabled"/>
-                    <Component name="Map to AD" state="Enabled"/>
+                    <Component name="Display" state="Enabled"/>
+                    <Component name="Write to AD" state="Enabled"/>
                 </SimulationStates>
                 <ProxySettings/>
             </SimulationConfig>
             <LogConfig/>
             <ContainerEF name="EntryFeedContainer"/>
             <ContainerDF name="DataFlowContainer">
-                <ModTime>1643408572123</ModTime>
+                <ModTime>1643619234274</ModTime>
                 <Script name="Read Group file">
                     <ModTime>1643407136254</ModTime>
                     <parameter name="script"><![CDATA[groupFile = system.getConnector("GroupFile");
@@ -129,9 +130,11 @@ for(var org in list){
 }]]></parameter>
                 </Script>
                 <Script name="Process Users">
-                    <ModTime>1643408554871</ModTime>
-                    <parameter name="script"><![CDATA[var list = stamdata.getElementsByTagName("Resource");
-var users = {};
+                    <ModTime>1643619211186</ModTime>
+                    <parameter name="script"><![CDATA[// Get all Resource elements from the input XML
+var list = stamdata.getElementsByTagName("Resource");
+var userCnt = 0;
+var users = {}; // For collecting all users
 for(var resource in list){
 	var userId = resource.ResourceId.getValue();
 	users[userId] = {};
@@ -142,15 +145,29 @@ for(var resource in list){
 	user.sn = resource.Surname.getValue();
 	user.SSN = resource.SocialSecurityNumber.getValue();
 	
-	// Now to get some of the most recent Employment data
+	// Now to gather Employment data
+	var otherPostIDs = [];
 	var empList = resource.getElementsByTagName("Employment");
 	for (var emp in empList) {
+		// Collect OtherPostIDs
+		var postID = "";
+		// Get Ansvar
+		var relList = emp.Relations.getChildNodes();
+		for (var rel in relList) {
+			if (rel.@Name == "Ansvar") {
+				postID = "Arbeidssted=" + rel.Value.getValue();
+				postID += "=" + user.Percentage + "%";
+				otherPostIDs.push(postID + "=" + emp.PostIdDescription);
+			}
+		}
+		
+		// Only continue with latest main employment
 		if (emp.MainPosition.getValue() != "true" || // only the main position
 			emp.DateTo.getValue() < user.DateTo) {   // and the latest one (all users have one Main, as far as I could see) 
 			continue;
 		}
 		user.Title = emp.PostCodeDescription.getValue();
-		user.Type = emp.EmploymentType.getValue();
+		user.Type = emp.EmploymentType.getValue().toUpperCase();
 		user.Active = isActive(user);
 		user.Percentage = emp.Percentage.getValue();
 		user.EmpResourceId = emp.@ResourceId.getValue();
@@ -182,20 +199,6 @@ for(var resource in list){
 		}
 	}
 	
-	// Now for OtherPostIDs
-	var otherPostIDs = [];
-	for (emp in empList) {
-		var postID = "";
-		// Get Ansvar
-		var relList = emp.Relations.getChildNodes();
-		for (var rel in relList) {
-			if (rel.@Name == "Ansvar") {
-				postID = "Arbeidssted=" + rel.Value.getValue();
-				postID += "=" + user.Percentage + "%";
-				otherPostIDs.push(postID + "=" + emp.PostIdDescription);
-			}
-		}
-	}
 	user.OtherPostIDs = otherPostIDs.join("=") + "=";
 
 	// Get email addresses
@@ -213,11 +216,16 @@ for(var resource in list){
 	} else {
 		user.ManagerId = org.manager;
 	}
-}]]></parameter>
+	
+	userCnt++;
+}
+
+log.msg("Users read: " + userCnt);]]></parameter>
                 </Script>
                 <Script name="Set manager and group">
-                    <ModTime>1643407124305</ModTime>
-                    <parameter name="script"><![CDATA[for (var userId in users) {
+                    <ModTime>1643618701543</ModTime>
+                    <parameter name="script"><![CDATA[// We can get manager data now after having processed all users in the previous step
+for (var userId in users) {
 	var user = users[userId];
 	var mgr = users[user.ManagerId];
 	
@@ -237,13 +245,18 @@ for(var resource in list){
 	user.Groups = groupLine;
 }]]></parameter>
                 </Script>
-                <Script name="Map to AD">
-                    <ModTime>1643408572123</ModTime>
+                <Script name="Display">
+                    <ModTime>1643619234274</ModTime>
                     <parameter name="script"><![CDATA[for (var userId in users) {
 	var user = users[userId];
 	if (user.ResourceID != "58464") continue;
-	log.msg(entryStr(work.fromJSON(toJson(user))));
+	log.msg("\n---------" + entryStr(work.fromJSON(toJson(user))));
 }]]></parameter>
+                </Script>
+                <Script name="Write to AD">
+                    <ModTime>1643618847844</ModTime>
+                    <parameter name="script"><![CDATA[ad = system.getConnector("ActiveDirectory");
+ad.initialize(true);]]></parameter>
                 </Script>
             </ContainerDF>
             <ThreadOptions/>
@@ -993,61 +1006,314 @@ for(var resource in list){
                 <Schema name="AssemblyLineInitParams"/>
             </InitParams>
         </AssemblyLine>
-    </Folder>
-    <Folder name="Connectors">
-        <Connector name="ActiveTypes">
-            <InheritFrom>system:/Connectors/ibmdi.FileSystem</InheritFrom>
-            <ModTime>1643227409371</ModTime>
-            <ConnectorMode>Iterator</ConnectorMode>
-            <ConnectorState>Enabled</ConnectorState>
-            <Configuration>
-                <InheritFrom>[parent]</InheritFrom>
-                <parameter name="filePath">BrukerGruppeSync/ActiveTypes.txt</parameter>
-            </Configuration>
-            <Parser>
-                <InheritFrom>system:/Parsers/ibmdi.LineReader</InheritFrom>
-                <parameter name="characterSet">UTF-8</parameter>
-            </Parser>
-            <AttributeMap name="Input">
-                <InheritFrom>[parent]</InheritFrom>
-                <AttributeMapItem>
-                    <Name>*</Name>
-                    <Type>simple</Type>
-                    <Simple>*</Simple>
-                </AttributeMapItem>
-            </AttributeMap>
-            <AttributeMap name="Output">
-                <InheritFrom>[parent]</InheritFrom>
-            </AttributeMap>
-            <DeltaSettings>
-                <WhenToCommit>After every database operation</WhenToCommit>
-                <RowLocking>SERIALIZABLE</RowLocking>
-                <ChangeDetectionMode>DETECT_ALL</ChangeDetectionMode>
-            </DeltaSettings>
-            <Schema name="Input">
-                <InheritFrom>[parent]</InheritFrom>
-            </Schema>
-            <Schema name="Output">
-                <InheritFrom>[parent]</InheritFrom>
-            </Schema>
-            <LinkCriteria>
-                <InheritFrom>[parent]</InheritFrom>
-            </LinkCriteria>
+    <AssemblyLine name="BrukerGruppeSync 20220131 0930">
+            <ModTime>1643408572123</ModTime>
+            <Settings>
+                <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+                <parameter name="automapattributes">false</parameter>
+                <parameter name="createTombstones">false</parameter>
+                <parameter name="includeGlobalPrologs">true</parameter>
+                <parameter name="includePrologs"><![CDATA[Logger
+Mapper
+ScriptLib
+]]></parameter>
+                <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+            </Settings>
             <Hooks>
-                <InheritFrom>[parent]</InheritFrom>
+                <ModTime>1642763283974</ModTime>
             </Hooks>
             <CheckpointConfig/>
             <SandboxConfig/>
-            <Reconnect>
-                <InheritFrom>[parent]</InheritFrom>
-                <ReconnectRules/>
-            </Reconnect>
+            <SimulationConfig>
+                <SimulationStates>
+                    <Component name="Read Group file" state="Enabled"/>
+                    <Component name="Agresso Stamdata" state="Enabled"/>
+                    <Component name="Read Organizations" state="Enabled"/>
+                    <Component name="Process Users" state="Enabled"/>
+                    <Component name="Set manager and group" state="Enabled"/>
+                    <Component name="Map to AD" state="Enabled"/>
+                </SimulationStates>
+                <ProxySettings/>
+            </SimulationConfig>
+            <LogConfig/>
+            <ContainerEF name="EntryFeedContainer"/>
+            <ContainerDF name="DataFlowContainer">
+                <ModTime>1643408572123</ModTime>
+                <Script name="Read Group file">
+                    <ModTime>1643407136254</ModTime>
+                    <parameter name="script"><![CDATA[groupFile = system.getConnector("GroupFile");
+groupFile.initialize(null);
+groupFile.selectEntries();
+
+groups = {};
+while ((entry = groupFile.getNextEntry()) != null) {
+	var line = entry.getString("line");
+	var p = line.indexOf(";");
+	if (p > 0) {
+		groups[line.substring(0,p).trim()] = line.substring(p+1).trim().replaceAll(";", "|");
+	}
+}
+
+groupFile.terminate();]]></parameter>
+                </Script>
+                <Connector name="Agresso Stamdata">
+                    <InheritFrom>system:/Connectors/ibmdi.FileSystem</InheritFrom>
+                    <ModTime>1643141783739</ModTime>
+                    <ConnectorMode>Iterator</ConnectorMode>
+                    <ConnectorState>Enabled</ConnectorState>
+                    <Configuration>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1643141783739</ModTime>
+                        <parameter name="filePath">_data/Stamdata3_FSI_AL.xml</parameter>
+                    </Configuration>
+                    <Parser>
+                        <InheritFrom>system:/Parsers/ibmdi.XML2</InheritFrom>
+                        <parameter name="entry.tag"/>
+                    </Parser>
+                    <AttributeMap name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                        <AttributeMapItem>
+                            <Name>*</Name>
+                            <Type>simple</Type>
+                            <Simple>*</Simple>
+                        </AttributeMapItem>
+                    </AttributeMap>
+                    <AttributeMap name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </AttributeMap>
+                    <DeltaSettings>
+                        <WhenToCommit>After every database operation</WhenToCommit>
+                        <RowLocking>SERIALIZABLE</RowLocking>
+                        <ChangeDetectionMode>DETECT_ALL</ChangeDetectionMode>
+                    </DeltaSettings>
+                    <Schema name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                    <Schema name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                    <LinkCriteria>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </LinkCriteria>
+                    <Hooks>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Hooks>
+                    <CheckpointConfig/>
+                    <SandboxConfig/>
+                    <Reconnect>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ReconnectRules/>
+                    </Reconnect>
+                    <Operations/>
+                    <PoolDefinition>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </PoolDefinition>
+                    <PoolInstance/>
+                </Connector>
+                <Script name="Read Organizations">
+                    <ModTime>1643201870935</ModTime>
+                    <parameter name="script"><![CDATA[stamdata = work.clone();
+var list = stamdata.getElementsByTagName("Organisation");
+var orgs = {};
+for(var org in list){
+	var mgrs = org.Managers.getChildNodes();
+	if (mgrs.getLength() == 0) {
+		var mgr = 0;
+	} else {
+		var mgr = mgrs[0].getValue();
+	}
+	orgs[org.Id.getValue()] = {
+		parent: org.ParentId.getValue(),
+		id: org.Id.getValue(),
+		manager: mgr,
+		name: org.Name.getValue(),
+		companycode: org.CompanyCode.getValue(),
+		status: org.Status.getValue()
+	} 
+
+
+}]]></parameter>
+                </Script>
+                <Script name="Process Users">
+                    <ModTime>1643408554871</ModTime>
+                    <parameter name="script"><![CDATA[var list = stamdata.getElementsByTagName("Resource");
+var users = {};
+for(var resource in list){
+	var userId = resource.ResourceId.getValue();
+	users[userId] = {};
+	var user = users[userId];
+	
+	user.ResourceID = userId;
+	user.givenName = resource.FirstName.getValue();
+	user.sn = resource.Surname.getValue();
+	user.SSN = resource.SocialSecurityNumber.getValue();
+	
+	// Now to get some of the most recent Employment data
+	var empList = resource.getElementsByTagName("Employment");
+	for (var emp in empList) {
+		if (emp.MainPosition.getValue() != "true" || // only the main position
+			emp.DateTo.getValue() < user.DateTo) {   // and the latest one (all users have one Main, as far as I could see) 
+			continue;
+		}
+		user.Title = emp.PostCodeDescription.getValue();
+		user.Type = emp.EmploymentType.getValue();
+		user.Active = isActive(user);
+		user.Percentage = emp.Percentage.getValue();
+		user.EmpResourceId = emp.@ResourceId.getValue();
+		user.PostIdDescription = emp.PostIdDescription.getValue();
+		user.MainPos = emp.MainPosition.getValue();
+		user.DateTo = emp.dateTo.getValue();
+		user.Percentage = emp.Percentage.getValue();
+
+		// Get department
+		var relList = emp.getElementsByTagName("Relation");
+		for (var rel in relList) {
+			if (rel.@ElementType == "ORGANIZATIONAL_UNIT") {
+				user.DepartmentId = rel.Value.getValue();
+				user.DepartmentName = rel.Description.getValue();
+				user.FromDate = rel.DateFrom.getValue();
+				user.ToDate = rel.DateTo.getValue();
+			}
+		}
+
+		// Get Ansvar
+		var relList = emp.Relations.getChildNodes();
+		for (var rel in relList) {
+			if (rel.@Name == "Ansvar") {
+				user.Ansvar = rel.Value.getValue();
+			} else
+			if (rel.@Name == "Organisasjonsenhet") {
+				user.Group = rel.Value.getValue();
+			}	
+		}
+	}
+	
+	// Now for OtherPostIDs
+	var otherPostIDs = [];
+	for (emp in empList) {
+		var postID = "";
+		// Get Ansvar
+		var relList = emp.Relations.getChildNodes();
+		for (var rel in relList) {
+			if (rel.@Name == "Ansvar") {
+				postID = "Arbeidssted=" + rel.Value.getValue();
+				postID += "=" + user.Percentage + "%";
+				otherPostIDs.push(postID + "=" + emp.PostIdDescription);
+			}
+		}
+	}
+	user.OtherPostIDs = otherPostIDs.join("=") + "=";
+
+	// Get email addresses
+	var addr = resource.getElementsByTagName("Address");
+	var emails = addr.EMailList.getChildNodes();
+	if (emails.getLength() > 0) {
+		user.Mail = emails[0].getValue();
+	}
+
+	// Set manager
+	var org = orgs[user.DepartmentId];
+	if (typeof org == "undefined") {
+		log.error("************ Undefined org (" + user.departmentId 
+			+ ") for user " + userInfo(user));
+	} else {
+		user.ManagerId = org.manager;
+	}
+}]]></parameter>
+                </Script>
+                <Script name="Set manager and group">
+                    <ModTime>1643407124305</ModTime>
+                    <parameter name="script"><![CDATA[for (var userId in users) {
+	var user = users[userId];
+	var mgr = users[user.ManagerId];
+	
+	if (typeof mgr == "undefined") {
+//		log.error("************ Undefined manager (" + user.ManagerId 
+//			+ ") for user " + userInfo(user));
+		continue;
+	}
+	user.ManagerName = mgr.FirstName + " " + mgr.Surname;
+	user.ManagerEmail = mgr.Mail;	
+	
+	// Now to set the group based on the Group file
+	var groupLine = groups["everyone"];
+	if (groups[user.Group]) {
+		groupLine += "|" + groupLine;
+	}
+	user.Groups = groupLine;
+}]]></parameter>
+                </Script>
+                <Script name="Map to AD">
+                    <ModTime>1643408572123</ModTime>
+                    <parameter name="script"><![CDATA[for (var userId in users) {
+	var user = users[userId];
+	if (user.ResourceID != "58464") continue;
+	log.msg(entryStr(work.fromJSON(toJson(user))));
+}]]></parameter>
+                </Script>
+            </ContainerDF>
+            <ThreadOptions/>
             <Operations/>
-            <PoolDefinition>
-                <InheritFrom>[parent]</InheritFrom>
-            </PoolDefinition>
-            <PoolInstance/>
-        </Connector>
+            <InitParams>
+                <Schema name="AssemblyLineInitParams"/>
+            </InitParams>
+        </AssemblyLine>
+        <AssemblyLine name="TestMail">
+            <ModTime>1643624266867</ModTime>
+            <Settings>
+                <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+                <parameter name="automapattributes">false</parameter>
+                <parameter name="createTombstones">false</parameter>
+                <parameter name="includeGlobalPrologs">true</parameter>
+                <parameter name="includePrologs"><![CDATA[Logger
+ScriptLib
+Mailer]]></parameter>
+                <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+            </Settings>
+            <Hooks/>
+            <CheckpointConfig/>
+            <SandboxConfig/>
+            <SimulationConfig>
+                <SimulationStates>
+                    <Component name="Test" state="Enabled"/>
+                </SimulationStates>
+                <ProxySettings/>
+            </SimulationConfig>
+            <LogConfig/>
+            <ContainerEF name="EntryFeedContainer"/>
+            <ContainerDF name="DataFlowContainer">
+                <ModTime>1643624266867</ModTime>
+                <Script name="Test">
+                    <ModTime>1643624266867</ModTime>
+                    <parameter name="script"><![CDATA[var args = {
+	hostname: getProperty("smtp.hostname"),
+	port: getPropertyInt("smtp.port"),
+	ssl: getPropertyBoolean("smtp.ssl"),
+	username: getProperty("smtp.username"),
+	password: getProperty("smtp.password")
+}
+//log.msg("Using args: " + toJson(args));
+mail = new Mailer(args);
+
+mail.send({
+	to: "eddie.hartman@storfolloikt.no",
+	from: "tdi@storfolloikt.no",
+	subject: "Test Email",
+	body: "<html><head><b>Test Mail</b></head><body><p>This is a test</p></body></html>",
+	contentType: "text/html",
+	attachments: "solution.properties"
+})]]></parameter>
+                </Script>
+            </ContainerDF>
+            <ThreadOptions/>
+            <Operations/>
+            <InitParams>
+                <Schema name="AssemblyLineInitParams"/>
+            </InitParams>
+        </AssemblyLine>
+    </Folder>
+    <Folder name="Connectors">
+        
     <Connector name="GroupFile">
             <InheritFrom>system:/Connectors/ibmdi.FileSystem</InheritFrom>
             <ModTime>1643405933990</ModTime>
@@ -1103,6 +1369,66 @@ for(var resource in list){
             <PoolDefinition>
                 <InheritFrom>[parent]</InheritFrom>
                 <ModTime>1643405869834</ModTime>
+                <Enabled>false</Enabled>
+                <MinPoolSize>0</MinPoolSize>
+                <MaxPoolSize>0</MaxPoolSize>
+                <PurgeInterval>0</PurgeInterval>
+                <InitializeAttempts>1</InitializeAttempts>
+                <InitializeSleepInterval>0</InitializeSleepInterval>
+            </PoolDefinition>
+            <PoolInstance/>
+        </Connector>
+    <Connector name="ActiveDirectory">
+            <InheritFrom>system:/Connectors/ibmdi.LDAP</InheritFrom>
+            <ModTime>1643619091651</ModTime>
+            <ConnectorMode>Update</ConnectorMode>
+            <ConnectorState>Enabled</ConnectorState>
+            <Configuration>
+                <InheritFrom>[parent]</InheritFrom>
+                <ModTime>1643619091651</ModTime>
+                <parameter name="ldapPassword">@SUBSTITUTE{property.BrukerGruppeSync:ad.password}</parameter>
+                <parameter name="ldapUrl">@SUBSTITUTEldap://{property.BrukerGruppeSync:ad.url}:{property.BrukerGruppeSync:ad.port}</parameter>
+                <parameter name="ldapUsername">@SUBSTITUTE{property.BrukerGruppeSync:ad.username}</parameter>
+            </Configuration>
+            <Parser>
+                <InheritFrom>[parent]</InheritFrom>
+                <ModTime>1643618810241</ModTime>
+            </Parser>
+            <AttributeMap name="Input">
+                <InheritFrom>[parent]</InheritFrom>
+                <ModTime>1643618810241</ModTime>
+            </AttributeMap>
+            <AttributeMap name="Output">
+                <InheritFrom>[parent]</InheritFrom>
+                <ModTime>1643618810241</ModTime>
+            </AttributeMap>
+            <DeltaSettings/>
+            <Schema name="Input">
+                <InheritFrom>[parent]</InheritFrom>
+                <ModTime>1643618810241</ModTime>
+            </Schema>
+            <Schema name="Output">
+                <InheritFrom>[parent]</InheritFrom>
+                <ModTime>1643618810241</ModTime>
+            </Schema>
+            <LinkCriteria>
+                <InheritFrom>[parent]</InheritFrom>
+                <ModTime>1643618810241</ModTime>
+            </LinkCriteria>
+            <Hooks>
+                <InheritFrom>[parent]</InheritFrom>
+                <ModTime>1643618810241</ModTime>
+            </Hooks>
+            <CheckpointConfig/>
+            <SandboxConfig/>
+            <Reconnect>
+                <InheritFrom>[parent]</InheritFrom>
+                <ReconnectRules/>
+            </Reconnect>
+            <Operations/>
+            <PoolDefinition>
+                <InheritFrom>[parent]</InheritFrom>
+                <ModTime>1643618822165</ModTime>
                 <Enabled>false</Enabled>
                 <MinPoolSize>0</MinPoolSize>
                 <MaxPoolSize>0</MaxPoolSize>
@@ -1204,6 +1530,231 @@ var Mapper = function(mappingFileName) {
 }]]></parameter>
         </Script>
     <Script name="ScriptLib">
+            <ModTime>1643624207687</ModTime>
+            <parameter name="includeFiles"/>
+            <parameter name="script"><![CDATA[// Must include AFTER Logger in an AL!!
+
+_VRS = "20200126 1301"; // First implementation
+
+log.msg("ScriptLib v" + _VRS);
+
+function userInfo(user, msg) {
+	var str = user.resourceId + ": " + user.FirstName + " " + user.Surname;
+	if (typeof msg != "undefined" && msg) {
+		str += " - " + msg;
+	}
+	return str;
+}
+
+function entryStr(entry) {
+	var attNames = entry.getAttributeNames();
+	java.util.Arrays.sort(attNames);
+	var str = "\n";
+	for (var name in attNames) {
+		str += " " + name + ": " + entry[name] + "\n";
+	}
+	return str;
+}
+
+function getProperty(propName) {
+	return system.getTDIProperty(propName);
+}
+
+function getPropertyInt(propName) {
+	var prop = system.getTDIProperty(propName);
+	return system.toInt(prop);
+}
+
+function getPropertyBoolean(propName) {
+	return (system.getTDIProperty(propName) || "").toLowerCase() != "false";
+}
+
+_TYPE_CODES = null;
+function isActive(user) {
+	if (!_TYPE_CODES) {
+		// Read in the ActiveTypes.txt file and set the two global variables above
+		_TYPE_CODES = {
+			active: (getProperty("user.type.active") || "").toUpperCase(),
+			inactive: (getProperty("user.type.inactive") || "").toUpperCase()
+		};
+	}
+	
+	if (_TYPE_CODES.active.indexOf(user.Type) >= 0) {
+		return true;
+	} else 
+	if (_TYPE_CODES.inactive.indexOf(user.Type) >= 0) {
+		return false;
+	} else {
+		throw "Invalid type code (" + user.Type + ") for user " + userInfo(user);
+	}
+}]]></parameter>
+        </Script>
+    <Script name="Mailer">
+            <ModTime>1643617700336</ModTime>
+            <parameter name="includeFiles"/>
+            <parameter name="script"><![CDATA[// Mailer is used to send emails
+//
+// The argument 'args' can hold the following properties:
+//		o hostname 	- SMTP hostname
+//		o port		- SMTP port (default is 25)
+//		o ssl		- true/false if SSL is enabled (default = true)
+//		o username	- username credential for SMTP server
+//		o password 	- password credential for SMTP server
+//
+// Main method is: send()
+//    where attachments is either a string or bytearray, or an array of either
+//
+var Mailer = function(args) {
+	this.vrs = "20220131 0927"; // Initial version
+	
+	this.hostname = args.hostname || "* NOT SPECIFIED *";
+	this.port = args.port || 25;
+	this.ssl = (typeof args.ssl == "undefined") ? true : !String(args.ssl).equalsIgnoreCase("false");
+	this.username = args.username || "* NOT SPECIFIED *";
+	this.password = args.password || "* NOT SPECIFIED *";
+	
+	// Method to send an email
+	// Valid args properties are:
+	//    o to			- to address
+	//	  o from		- from address
+	//	  o subject		- subject line
+	//	  o body		- body, either text or a filepath
+	//	  o contentType	- content type of the body, default is 'text'
+	//	  o attachments	- optional filepath or array of filepaths to attach to email
+	this.send = function(args) {
+		var toAddress = args.toAddress || args.to || "* NOT SPECIFIED *";
+		if (!(toAddress instanceof Array)) {
+			toAddress = [toAddress];
+		}
+		var fromAddress = args.fromAddress || args.from || "* NOT SPECIFIED *";
+		var subject = args.subject || "* NOT SPECIFIED *";
+		var body = args.body || "* NOT SPECIFIED *";
+		var contentType = args.contentType || args.contenttype || null;
+		var attachments = args.attachments || args.attachment || [];
+		if (!(attachments instanceof Array) || attachments.toString().startsWith("[B@")) {
+			attachments = [attachments];
+		}
+		
+		this.log("@@@@@ Sending mail to  " + toAddress + ": " + subject + "...");
+		    		
+		// Get system properties
+		var properties = java.lang.System.getProperties();
+		
+		// Setup mail server
+		properties.setProperty("mail.smtp.host", this.hostname);
+		properties.setProperty("mail.smtp.port", String(this.port));
+		properties.setProperty("mail.smtp.ssl.enable", this.ssl);
+		properties.setProperty("mail.smtp.auth", "true");
+		properties.setProperty("mail.smtp.socketFactory.port", String(this.port));
+		properties.setProperty("mail.smtp.socketFactory.class", "javax.net.ssl.SSLSocketFactory");
+		var session = javax.mail.Session.getInstance(properties);
+		
+		// Used to debug SMTP issues
+		//session.setDebug(true);
+		try {
+		    // Create a default MimeMessage object.
+		    var message = new javax.mail.internet.MimeMessage(session);
+		    // Set From: header field of the header.
+		    message.setFrom(new javax.mail.internet.InternetAddress(fromAddress));
+		    // Set To: header field of the header.
+		    for (var i = 0; i < toAddress.length; i++) {
+			    message.addRecipient(javax.mail.Message.RecipientType.TO, new javax.mail.internet.InternetAddress(toAddress[i]));
+		    }
+		    // Set Subject: header field
+		    message.setSubject(subject);
+
+		    // Now set the actual message
+		    // If there are attachments, then a bit more work
+		    if (attachments.length == 0) {
+			    if (contentType) {
+				    message.setContent(this.loadBody(body), contentType);
+			    } else {
+				    message.setText(this.loadBody(body));
+			    }
+		    } else {
+		    	var messageBodyPart = new javax.mail.internet.MimeBodyPart();
+			    if (contentType) {
+				    messageBodyPart.setContent(this.loadBody(body), contentType);
+			    } else {
+				    messageBodyPart.setText(this.loadBody(body));
+			    }
+			    var multiPart = new javax.mail.internet.MimeMultipart();
+		    	multiPart.addBodyPart(messageBodyPart);
+			    
+			    for (var i = 0; i < attachments.length; i++) {
+			    	var thisAtt = attachments[i];
+			    	var source = new javax.activation.FileDataSource(thisAtt);
+			    	messageBodyPart = new javax.mail.internet.MimeBodyPart();
+			    	messageBodyPart.setDataHandler(new javax.activation.DataHandler(source));
+			    	messageBodyPart.setFileName(thisAtt);
+			    	multiPart.addBodyPart(messageBodyPart);
+			    }
+			    
+			    message.setContent(multiPart);
+		    }
+		    message.saveChanges();      // don't forget this
+		    
+		    var tr = session.getTransport("smtp");
+		    tr.connect(this.hostname, this.username, this.password);
+		    tr.sendMessage(message, message.getAllRecipients());
+			tr.close();
+
+		    this.log("Sent message successfully!");
+		} catch ( mex) {
+		    this.log("WARN", "Error sending mail - " + mex);
+		}		
+	}
+	
+	// If body passed is a filename, then load the file and return it.
+	// Otherwise return the body argument value
+	this.loadBody = function(body) {
+		var file = new java.io.File(body);
+		if (file.exists()) {
+			file = system.openFileForInput(body);
+			var buf = new java.lang.StringBuilder();
+			var line = null;
+			while ((line = file.readLine()) != null) {
+				buf.append(line + "\n");
+			}
+			file.close();
+			return buf.toString();
+		}
+		
+		return body;
+	}
+	
+	// Local log function
+	this.log = function(lvl, msg, throwit) {
+		throwit = throwit || false;
+		
+		if (typeof lvl == "undefined") {
+			msg = "";
+			lvl = "INFO";
+		} else
+		if (typeof msg == "undefined") {
+			msg = lvl;
+			lvl = "INFO";
+		}
+		
+		log.msg(lvl, "[Mailer] " + msg);
+		
+		if (throwit) throw "[Mailer] " + msg;
+	}
+
+	// Initialization method
+	this.initialize = function() {
+		this.log("v" + this.vrs);
+	} 
+
+	
+	// Initialization code below this point
+	
+	this.initialize();	
+
+	return this; // Always return *this*
+}]]></parameter>
+        </Script>
+        <Script name="ScriptLib 20220131 0930">
             <ModTime>1643228250929</ModTime>
             <parameter name="includeFiles"/>
             <parameter name="script"><![CDATA[// Must include AFTER Logger in an AL!!
@@ -1327,11 +1878,13 @@ function isActive(user) {
                 <CacheTimeout>0</CacheTimeout>
             </PropertyStore>
             <PropertyStore name="BrukerGruppeSync">
+                <ModTime>1643618082069</ModTime>
                 <Parser/>
                 <RawConnector>
                     <InheritFrom>system:/Connectors/ibmdi.Properties</InheritFrom>
-                    <parameter name="collection">@SUBSTITUTE{config.$directory}/BrukerGruppeSync.properties</parameter>
+                    <parameter name="collection">BrukerGruppeSync/BrukerGruppeSync.properties</parameter>
                     <parameter name="collectionType">BrukerGruppeSync</parameter>
+                    <parameter name="keyAlias"/>
                 </RawConnector>
                 <Key>key</Key>
                 <Value>value</Value>
