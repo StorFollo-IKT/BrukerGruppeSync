@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig IDIversion="Created by SDI7.2 - 2019-07-08" created="Tue Jan 25 12:25:42 CET 2022" createdBy="Eddie Hartman" modified="Mon Jan 31 11:22:33 CET 2022" modifiedBy="Eddie Hartman" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig IDIversion="Created by SDI7.2 - 2019-07-08" created="Tue Jan 25 12:25:42 CET 2022" createdBy="Eddie Hartman" modified="Mon Jan 31 13:38:51 CET 2022" modifiedBy="Eddie Hartman" version="7.1.1">
     <Folder name="AssemblyLines">
         <AssemblyLine name="BrukerGruppeSync">
             <ModTime>1643619234274</ModTime>
@@ -1259,7 +1259,7 @@ for(var resource in list){
             </InitParams>
         </AssemblyLine>
         <AssemblyLine name="TestMail">
-            <ModTime>1643624266867</ModTime>
+            <ModTime>1643627711323</ModTime>
             <Settings>
                 <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
                 <parameter name="automapattributes">false</parameter>
@@ -1282,9 +1282,9 @@ Mailer]]></parameter>
             <LogConfig/>
             <ContainerEF name="EntryFeedContainer"/>
             <ContainerDF name="DataFlowContainer">
-                <ModTime>1643624266867</ModTime>
+                <ModTime>1643627711323</ModTime>
                 <Script name="Test">
-                    <ModTime>1643624266867</ModTime>
+                    <ModTime>1643627711323</ModTime>
                     <parameter name="script"><![CDATA[var args = {
 	hostname: getProperty("smtp.hostname"),
 	port: getPropertyInt("smtp.port"),
@@ -1296,10 +1296,11 @@ Mailer]]></parameter>
 mail = new Mailer(args);
 
 mail.send({
-	to: "eddie.hartman@storfolloikt.no",
+	to: "knut.haug@storfolloikt.no; eddie.hartman@storfolloikt.no",
+	//to: "eddie.hartman@storfolloikt.no",
 	from: "tdi@storfolloikt.no",
 	subject: "Test Email",
-	body: "<html><head><b>Test Mail</b></head><body><p>This is a test</p></body></html>",
+	body: "BrukerGruppeSync/MailTemplate.html",
 	contentType: "text/html",
 	attachments: "solution.properties"
 })]]></parameter>
@@ -1590,7 +1591,7 @@ function isActive(user) {
 }]]></parameter>
         </Script>
     <Script name="Mailer">
-            <ModTime>1643617700336</ModTime>
+            <ModTime>1643627280385</ModTime>
             <parameter name="includeFiles"/>
             <parameter name="script"><![CDATA[// Mailer is used to send emails
 //
@@ -1624,7 +1625,11 @@ var Mailer = function(args) {
 	this.send = function(args) {
 		var toAddress = args.toAddress || args.to || "* NOT SPECIFIED *";
 		if (!(toAddress instanceof Array)) {
-			toAddress = [toAddress];
+			if (toAddress.indexOf(";")) {
+				toAddress = system.splitString(toAddress, ";");
+			} else {
+				toAddress = [toAddress];
+			}	
 		}
 		var fromAddress = args.fromAddress || args.from || "* NOT SPECIFIED *";
 		var subject = args.subject || "* NOT SPECIFIED *";
@@ -1658,7 +1663,7 @@ var Mailer = function(args) {
 		    message.setFrom(new javax.mail.internet.InternetAddress(fromAddress));
 		    // Set To: header field of the header.
 		    for (var i = 0; i < toAddress.length; i++) {
-			    message.addRecipient(javax.mail.Message.RecipientType.TO, new javax.mail.internet.InternetAddress(toAddress[i]));
+			    message.addRecipient(javax.mail.Message.RecipientType.TO, new javax.mail.internet.InternetAddress(toAddress[i].trim()));
 		    }
 		    // Set Subject: header field
 		    message.setSubject(subject);
