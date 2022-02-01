@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig IDIversion="Created by SDI7.2 - 2019-07-08" created="Tue Jan 25 12:25:42 CET 2022" createdBy="Eddie Hartman" modified="Tue Feb 01 09:23:26 CET 2022" modifiedBy="Eddie Hartman" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig IDIversion="Created by SDI7.2 - 2019-07-08" created="Tue Jan 25 12:25:42 CET 2022" createdBy="Eddie Hartman" modified="Tue Feb 01 09:36:56 CET 2022" modifiedBy="Eddie Hartman" version="7.1.1">
     <Folder name="AssemblyLines">
         <AssemblyLine name="BrukerGruppeSync">
             <ModTime>1643619234274</ModTime>
