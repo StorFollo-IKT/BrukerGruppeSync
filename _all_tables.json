@@ -1,0 +1,461 @@
+------ COSTS_ACCOUNTING ------
+  account                  : 113030                                             - class java.lang.Integer
+  amount                   : 1220.40                                            - class java.math.BigDecimal
+  cost_center              : 2552                                               - class java.lang.Integer
+  date                     : 2021-01-01                                         - class java.sql.Date
+  entry_line               : 1                                                  - class java.lang.Integer
+  entry_number             : 62100885                                           - class java.lang.Integer
+  function                 : 120                                                - class java.lang.Integer
+  id                       : 1                                                  - class java.lang.Integer
+  ignore                   : false                                              - class java.lang.Boolean
+  invoice_id               : 912                                                - class java.lang.Integer
+  invoice_number           : 330000148939                                       - class java.lang.String
+  period                   : 202101                                             - class java.lang.Integer
+  project                  : 1311A                                              - class java.lang.String
+  supplier_id              : 981929055                                          - class java.lang.Integer
+  supplier_no              : 17446                                              - class java.lang.String
+  text                     : 2021: IP VPN 20, nettleie, periode 02/2021, Å      - class java.lang.String
+11:20:03,355 INFO  - 
+------ COSTS_APPLICATION ------
+  active                   : true                                               - class java.lang.Boolean
+  cloud                    : false                                              - class java.lang.Boolean
+  customer_id              : AK                                                 - class java.lang.String
+  department_id            : 984                                                - class java.lang.Integer
+  external_cost            : 0                                                  - class java.lang.Integer
+  id                       : 1                                                  - class java.lang.Integer
+  identifier               : 1028A                                              - class java.lang.String
+  internal_hours           : 1                                                  - class java.lang.Integer
+  licence_cost             : 12662                                              - class java.lang.Integer
+  name                     : Bravida Integra                                    - class java.lang.String
+  responsible_id           :                                                    - object
+  sector_id                : 3                                                  - class java.lang.Integer
+  super_user_id            :                                                    - object
+  vendor                   : Bravida                                            - class java.lang.String
+11:20:03,367 INFO  - 
+------ COSTS_APPLICATION_INTEGRATIONS ------
+  from_application_id      : 3                                                  - class java.lang.Integer
+  id                       : 14                                                 - class java.lang.Integer
+  to_application_id        : 120                                                - class java.lang.Integer
+11:20:03,383 INFO  - 
+------ COSTS_APPLICATION_SERVERS ------
+  application_id           : 1                                                  - class java.lang.Integer
+  id                       : 4455                                               - class java.lang.Integer
+  server_id                : 61                                                 - class java.lang.Integer
+11:20:03,387 INFO  - 
+------ COSTS_APPLICATION_SERVERS_BAD ------
+  application_id           : 25                                                 - class java.lang.Integer
+  id                       : 291                                                - class java.lang.Integer
+  server_id                : 383                                                - class java.lang.Integer
+11:20:03,407 INFO  - 
+------ COSTS_APPLICATION_SUPPLIER_INVOICES ------
+  application_id           : 1                                                  - class java.lang.Integer
+  id                       : 48534                                              - class java.lang.Integer
+  invoice_id               : 7216                                               - class java.lang.Integer
+11:20:03,417 INFO  - 
+------ COSTS_COSTDISTRIBUTION ------
+  account                  : 124060                                             - class java.lang.String
+  application_id           : 207                                                - class java.lang.Integer
+  cost_center_id           : 659                                                - class java.lang.Integer
+  function_id              : 10120                                              - class java.lang.Integer
+  id                       : 9                                                  - class java.lang.Integer
+  percentage               : 100                                                - class java.lang.Integer
+11:20:03,433 INFO  - 
+------ COSTS_CUSTOMER ------
+  active                   : true                                               - class java.lang.Boolean
+  company_id               : 1                                                  - class java.lang.Integer
+  id                       : AK                                                 - class java.lang.String
+  name                     : Ås kommune                                         - class java.lang.String
+  served_by_id             :                                                    - object
+11:20:03,433 INFO  - 
+------ COSTS_CUSTOMER_AD_DIRECTORIES ------
+  customer_id              : AK                                                 - class java.lang.String
+  directory_id             : 4                                                  - class java.lang.Integer
+  id                       : 1                                                  - class java.lang.Integer
+11:20:03,461 INFO  - 
+------ COSTS_DEPARTMENT ------
+  customer_id              : AK                                                 - class java.lang.String
+  id                       : 1                                                  - class java.lang.Integer
+  name                     : Eiendomsdrift                                      - class java.lang.String
+  number                   : 6411                                               - class java.lang.Integer
+11:20:03,474 INFO  - 
+------ COSTS_LOCATION ------
+  active                   : true                                               - class java.lang.Boolean
+  address                  : Mellomveien                                        - class java.lang.String
+  customer_id              : AK                                                 - class java.lang.String
+  description              :                                                    - object
+  id                       : 1                                                  - class java.lang.Integer
+  latitude                 : 59.670374                                          - class java.math.BigDecimal
+  longitude                : 10.800258                                          - class java.math.BigDecimal
+  name                     : Ås ungdomsskole                                    - class java.lang.String
+  notes                    :                                                    - class java.lang.String
+  type_id                  : 1                                                  - class java.lang.Integer
+11:20:03,491 INFO  - 
+------ COSTS_LOCATIONTYPE ------
+  description              :                                                    - class java.lang.String
+  id                       : 1                                                  - class java.lang.Integer
+  type                     : Skole                                              - class java.lang.String
+11:20:03,500 INFO  - 
+------ COSTS_M365LICENSEMAPPING ------
+  guid                     : 18250162-5d87-4436-a834-d795c15c80f3               - class java.lang.String
+  id                       : 1                                                  - class java.lang.Integer
+  product_id               : 74                                                 - class java.lang.Integer
+  product_name             :                                                    - object
+  string_id                : M365EDU_A3_STUUSEBNFT                              - class java.lang.String
+11:20:03,517 INFO  - 
+------ COSTS_PRODUCT ------
+  active                   : true                                               - class java.lang.Boolean
+  id                       : 1                                                  - class java.lang.Integer
+  identifier               : 1330                                               - class java.lang.String
+  name                     : Virtuell server, liten                             - class java.lang.String
+  price                    : 1338                                               - class java.lang.Integer
+  type_id                  : 1                                                  - class java.lang.Integer
+11:20:03,531 INFO  - 
+------ COSTS_PRODUCTDELIVERY ------
+  account                  : 120007                                             - class java.lang.String
+  amount                   : 60                                                 - class java.lang.Integer
+  cost_center_id           : 176                                                - class java.lang.Integer
+  customer_id              : FK                                                 - class java.lang.String
+  function_id              : 55                                                 - class java.lang.Integer
+  id                       : 2                                                  - class java.lang.Integer
+  product_id               : 26                                                 - class java.lang.Integer
+  sector_id                :                                                    - object
+11:20:03,535 INFO  - 
+------ COSTS_PRODUCTGROUP ------
+  account                  : 119520                                             - class java.lang.String
+  active                   : true                                               - class java.lang.Boolean
+  assignment_product_id    : 55                                                 - class java.lang.Integer
+  group_type               : user                                               - class java.lang.String
+  id                       : 2                                                  - class java.lang.Integer
+  name                     : StorFollo IKT Standard Arbeidsflate (M365 E3)      - class java.lang.String
+11:20:03,551 INFO  - 
+------ COSTS_PRODUCTGROUP_PRODUCTS ------
+  id                       : 4                                                  - class java.lang.Integer
+  product_id               : 55                                                 - class java.lang.Integer
+  productgroup_id          : 2                                                  - class java.lang.Integer
+11:20:03,551 INFO  - 
+------ COSTS_PRODUCTMAPPING ------
+  id                       : 1                                                  - class java.lang.Integer
+  product_id               : 66                                                 - class java.lang.Integer
+11:20:03,567 INFO  - 
+------ COSTS_PRODUCTMAPPING_ORGANISATIONS ------
+  id                       : 1                                                  - class java.lang.Integer
+  organisation_id          : 1                                                  - class java.lang.Integer
+  productmapping_id        : 1                                                  - class java.lang.Integer
+11:20:03,585 INFO  - 
+------ COSTS_PRODUCTTYPE ------
+  description              : Alle typer servere                                 - class java.lang.String
+  id                       : 1                                                  - class java.lang.Integer
+  type                     : Server                                             - class java.lang.String
+11:20:03,600 INFO  - 
+------ COSTS_SECTOR ------
+  customer_id              : AK                                                 - class java.lang.String
+  id                       : 1                                                  - class java.lang.Integer
+  name                     : Helse                                              - class java.lang.String
+11:20:03,611 INFO  - 
+------ COSTS_SECTOR_DEPARTMENTS ------
+  department_id            : 2                                                  - class java.lang.Integer
+  id                       : 135                                                - class java.lang.Integer
+  sector_id                : 1                                                  - class java.lang.Integer
+11:20:03,630 INFO  - 
+------ COSTS_SERVER ------
+  active                   : false                                              - class java.lang.Boolean
+  ad_object_id             : 53                                                 - class java.lang.Integer
+  customer_id              : AK                                                 - class java.lang.String
+  description              : virtuell - ny adgangsserver                        - class java.lang.String
+  dn                       : CN=ADGANG-02,OU=Servers,DC=as-admin,DC=no          - class java.lang.String
+  dns_name                 : ADGANG-02.as-admin.no                              - class java.lang.String
+  id                       : 1                                                  - class java.lang.Integer
+  imported                 : true                                               - class java.lang.Boolean
+  ip                       :                                                    - object
+  last_logon               : 2021-04-22 06:22:30.0                              - class java.sql.Timestamp
+  last_update              : 2022-01-11 05:45:05.99774                          - class java.sql.Timestamp
+  manufacturer             :                                                    - object
+  model                    :                                                    - object
+  name                     : ADGANG-02                                          - class java.lang.String
+  product_group_id         : 10                                                 - class java.lang.Integer
+  product_id               : 1                                                  - class java.lang.Integer
+  serial                   :                                                    - object
+  type_id                  :                                                    - object
+11:20:03,634 INFO  - 
+------ COSTS_SERVER_BAD ------
+  ad_object_id             :                                                    - object
+  customer_id              : VK                                                 - class java.lang.String
+  description              :                                                    - class java.lang.String
+  dn                       : CN=VHLCA01,OU=Servere,DC=vestby,DC=kommune,DC      - class java.lang.String
+  dns_name                 : VHLCA01.vestby.kommune.no                          - class java.lang.String
+  id                       : 6                                                  - class java.lang.Integer
+  imported                 : false                                              - class java.lang.Boolean
+  ip                       :                                                    - object
+  last_logon               : 2020-06-04 09:24:33.0                              - class java.sql.Timestamp
+  last_update              : 2020-06-05 20:35:55.292078                         - class java.sql.Timestamp
+  name                     : VHLCA01                                            - class java.lang.String
+  product_id               : 1                                                  - class java.lang.Integer
+  type_id                  :                                                    - object
+11:20:03,651 INFO  - 
+------ COSTS_SERVERTYPE ------
+  description              : Alle former for databaseservere                    - class java.lang.String
+  id                       : 1                                                  - class java.lang.Integer
+  type                     : Databaseserver                                     - class java.lang.String
+11:20:03,702 INFO  - 
+------ COSTS_STUDENT ------
+  active                   : true                                               - class java.lang.Boolean
+  customer_id              : FK                                                 - class java.lang.String
+  firstName                : Liv Alejandra                                      - class java.lang.String
+  guid                     : f82dc81d-3b21-43b6-9718-aca3d7a69ca5               - class java.lang.String
+  id                       : 1                                                  - class java.lang.Integer
+  lastName                 : Havstad Alpizar                                    - class java.lang.String
+  ssn                      : 05080978652                                        - class java.lang.String
+11:20:03,862 INFO  - 
+------ COSTS_USER ------
+  active                   : true                                               - class java.lang.Boolean
+  ad_object_id             : 1328                                               - class java.lang.Integer
+  ad_user                  : AK56959                                            - class java.lang.String
+  customer_id              : AK                                                 - class java.lang.String
+  dn                       : CN=Hågen Toverud,OU=Fritidsklubben Midtgard,O      - class java.lang.String
+  email                    : Hagen.Toverud@as.kommune.no                        - class java.lang.String
+  employee_id              : 1671                                               - class java.lang.Integer
+  id                       : 1                                                  - class java.lang.Integer
+  name                     : Hågen Toverud                                      - class java.lang.String
+  number                   : 56959                                              - class java.lang.Integer
+  product_group_id         : 4                                                  - class java.lang.Integer
+  pus_id                   : 5359                                               - class java.lang.Integer
+  student_id               :                                                    - object
+11:20:03,892 INFO  - 
+------ COSTS_USER_PRODUCTS ------
+  id                       : 3701                                               - class java.lang.Integer
+  product_id               : 68                                                 - class java.lang.Integer
+  user_id                  : 1                                                  - class java.lang.Integer
+11:20:03,985 INFO  - 
+------ COSTS_WORKSTATION ------
+  active                   : true                                               - class java.lang.Boolean
+  ad_object_id             : 11253                                              - class java.lang.Integer
+  cost_center_id           : 28                                                 - class java.lang.Integer
+  customer_id              : AK                                                 - class java.lang.String
+  distinguishedName        : CN=AKPC12961,OU=Admin Office 365,OU=Workstati      - class java.lang.String
+  function_id              : 10332                                              - class java.lang.Integer
+  id                       : 2                                                  - class java.lang.Integer
+  last_logon               : 2022-02-07 15:05:57.0                              - class java.sql.Timestamp
+  leased                   : false                                              - class java.lang.Boolean
+  manufacturer             : HP                                                 - class java.lang.String
+  model                    : HP ProDesk 400 G2 MINI                             - class java.lang.String
+  name                     : AKPC12961                                          - class java.lang.String
+  owner_id                 :                                                    - object
+  product_id               : 7                                                  - class java.lang.Integer
+  pus_id                   : 5204                                               - class java.lang.Integer
+  serial                   : CZC62590HG                                         - class java.lang.String
+  used_from                :                                                    - object
+  user_domain              : AS-ADMIN                                           - class java.lang.String
+  user_id                  : 2107                                               - class java.lang.Integer
+  user_name                : dfo                                                - class java.lang.String
+11:20:04,058 INFO  - 
+------ DJANGO_ADMIN_LOG ------
+  action_flag              : 1                                                  - class java.lang.Integer
+  action_time              : 2020-05-27 14:04:52.857062                         - class java.sql.Timestamp
+  change_message           : [{"added": {}}]                                    - class java.lang.String
+  content_type_id          : 4                                                  - class java.lang.Integer
+  id                       : 1                                                  - class java.lang.Integer
+  object_id                : 2                                                  - class java.lang.String
+  object_repr              : bhj                                                - class java.lang.String
+  user_id                  : 1                                                  - class java.lang.Integer
+11:20:04,069 INFO  - 
+------ DJANGO_CONTENT_TYPE ------
+  app_label                : account                                            - class java.lang.String
+  id                       : 17                                                 - class java.lang.Integer
+  model                    : emailaddress                                       - class java.lang.String
+11:20:04,071 INFO  - 
+------ DJANGO_MIGRATIONS ------
+  app                      : contenttypes                                       - class java.lang.String
+  applied                  : 2020-05-27 12:27:41.030418                         - class java.sql.Timestamp
+  id                       : 1                                                  - class java.lang.Integer
+  name                     : 0001_initial                                       - class java.lang.String
+11:20:04,103 INFO  - 
+------ DJANGO_SESSION ------
+  expire_date              : 2020-11-04 11:09:31.107442                         - class java.sql.Timestamp
+  session_data             : .eJxVjE0OwiAYRO_C2hD-Ke70ImT4StPGhiYCK-PdbU0X      - class java.lang.String
+  session_key              : 025fov9weysegaxd4onb430yfz3matxt                   - class java.lang.String
+11:20:04,105 INFO  - 
+------ DJANGO_SITE ------
+  domain                   : costs.storfollo.no                                 - class java.lang.String
+  id                       : 1                                                  - class java.lang.Integer
+  name                     : costs.storfollo.no                                 - class java.lang.String
+11:20:04,158 INFO  - 
+------ EHF_INVOICE_ATTACHMENT ------
+  file                     : invoice_attachments/2021/3162.pdf                  - class java.lang.String
+  id                       : 1                                                  - class java.lang.Integer
+  invoice_id               : 4                                                  - class java.lang.Integer
+  mime                     : application/pdf                                    - class java.lang.String
+  name                     : 3162.pdf                                           - class java.lang.String
+11:20:04,171 INFO  - 
+------ EHF_INVOICE_CUSTOMER ------
+  id                       : 918347151                                          - class java.lang.Integer
+  name                     : DRØBAK FROGN IDRETTSARENA KF                       - class java.lang.String
+11:20:04,208 INFO  - 
+------ EHF_INVOICE_INVOICE ------
+  amount                   : 60668.23                                           - class java.math.BigDecimal
+  credit                   : false                                              - class java.lang.Boolean
+  customer_id              : 963999089                                          - class java.lang.Integer
+  date                     : 2021-01-21                                         - class java.sql.Date
+  id                       : 1                                                  - class java.lang.Integer
+  invoice_number           : 18424                                              - class java.lang.String
+  order_number             :                                                    - object
+  supplier_id              : 976734173                                          - class java.lang.Integer
+11:20:04,343 INFO  - 
+------ EHF_INVOICE_INVOICELINE ------
+  description              :                                                    - object
+  id                       : 1                                                  - class java.lang.Integer
+  invoice_id               : 1                                                  - class java.lang.Integer
+  line_id                  : 0                                                  - class java.lang.Integer
+  name                     : Matilda Base                                       - class java.lang.String
+  price                    : 24762.54                                           - class java.math.BigDecimal
+  quantity                 : 1                                                  - class java.lang.Integer
+  sum                      : 24762.54                                           - class java.math.BigDecimal
+11:20:04,358 INFO  - 
+------ EHF_INVOICE_SERIALNUMBER ------
+  line_id                  : 7                                                  - class java.lang.Integer
+  serial                   : ZM41AQ94                                           - class java.lang.String
+11:20:04,369 INFO  - 
+------ EHF_INVOICE_SUPPLIER ------
+  alternate_id             :                                                    - object
+  id                       : 0                                                  - class java.lang.Integer
+  name                     : Ukjent                                             - class java.lang.String
+11:20:04,369 INFO  - 
+------ EMPLOYEE_INFO_COMPANY ------
+  companyCode              : AL                                                 - class java.lang.String
+  id                       : 1                                                  - class java.lang.Integer
+  name                     : Ås kommune                                         - class java.lang.String
+11:20:04,396 INFO  - 
+------ EMPLOYEE_INFO_COSTCENTER ------
+  company_id               : 1                                                  - class java.lang.Integer
+  description              : Ås ungdomsskole                                    - class java.lang.String
+  id                       : 1                                                  - class java.lang.Integer
+  value                    : 2210                                               - class java.lang.String
+11:20:04,458 INFO  - 
+------ EMPLOYEE_INFO_EMPLOYMENT ------
+  costCenter_id            : 79                                                 - class java.lang.Integer
+  dateFrom                 : 2019-07-01                                         - class java.sql.Date
+  dateTo                   : 2099-12-31                                         - class java.sql.Date
+  employmentType           : H                                                  - class java.lang.String
+  employmentTypeDescription: Godtgjørelse                                       - class java.lang.String
+  function_id              : 10110                                              - class java.lang.Integer
+  id                       : 1031295                                            - class java.lang.Integer
+  mainPosition             : true                                               - class java.lang.Boolean
+  organisation_id          : 146                                                - class java.lang.Integer
+  percentage               : 0.0                                                - class java.lang.Double
+  postCode                 : 990000                                             - class java.lang.Integer
+  postCodeDescription      : Tilfeldig utbetaling (DUMMY)                       - class java.lang.String
+  postId                   : 9001                                               - class java.lang.Integer
+  postIdDescription        : Annet                                              - class java.lang.String
+  resource_id              : 1627                                               - class java.lang.Integer
+  sequenceRef              : 338566                                             - class java.lang.Integer
+  workPlace_id             :                                                    - object
+11:20:04,469 INFO  - 
+------ EMPLOYEE_INFO_FUNCTION ------
+  company_id               : 1                                                  - class java.lang.Integer
+  description              : Grunnskole                                         - class java.lang.String
+  id                       : 1                                                  - class java.lang.Integer
+  value                    : 202                                                - class java.lang.String
+11:20:04,485 INFO  - 
+------ EMPLOYEE_INFO_ORGANISATION ------
+  company_id               : 1                                                  - class java.lang.Integer
+  id                       : 1                                                  - class java.lang.Integer
+  manager_id               : 13326                                              - class java.lang.Integer
+  name                     : Organisasjon og fellestjeneste                     - class java.lang.String
+  orgId                    : 010000                                             - class java.lang.String
+  parent_id                : 143                                                - class java.lang.Integer
+  status                   : N                                                  - class java.lang.String
+11:20:04,520 INFO  - 
+------ EMPLOYEE_INFO_RESOURCE ------
+  company_id               : 1                                                  - class java.lang.Integer
+  firstName                : Askal                                              - class java.lang.String
+  id                       : 1                                                  - class java.lang.Integer
+  lastName                 : Gugssa                                             - class java.lang.String
+  mainPosition_id          : 1053725                                            - class java.lang.Integer
+  resourceId               : 55450                                              - class java.lang.Integer
+  socialSecurityNumber     : 18107428638                                        - class java.lang.String
+  status                   : N                                                  - class java.lang.String
+11:20:04,553 INFO  - 
+------ INVOICE_INVOICE ------
+  customer_id              : AK                                                 - class java.lang.String
+  date                     : 2021-01-31                                         - class java.sql.Date
+  exported                 : true                                               - class java.lang.Boolean
+  id                       : 1                                                  - class java.lang.Integer
+  locked                   : true                                               - class java.lang.Boolean
+11:20:04,725 INFO  - 
+------ INVOICE_INVOICELINE ------
+  account                  : 120030                                             - class java.lang.String
+  amount                   : 650.00                                             - class java.math.BigDecimal
+  cost_center              : 2100                                               - class java.lang.String
+  dim3                     :                                                    - object
+  dim4                     :                                                    - object
+  dim5                     :                                                    - object
+  dim6                     :                                                    - object
+  function                 : 202                                                - class java.lang.Integer
+  id                       : 1                                                  - class java.lang.Integer
+  invoice_id               : 1                                                  - class java.lang.Integer
+  tax                      : 06                                                 - class java.lang.String
+  tax_code                 : 0                                                  - class java.lang.String
+  text                     : 1310.no, drift                                     - class java.lang.String
+11:20:04,765 INFO  - 
+------ INVOICE_INVOICELINEDETAIL ------
+  application_id           : 249                                                - class java.lang.Integer
+  id                       : 1                                                  - class java.lang.Integer
+  invoice_line_id          : 1                                                  - class java.lang.Integer
+  supplier_invoice_id      :                                                    - object
+  voucher_id               :                                                    - object
+11:20:04,795 INFO  - 
+------ INVOICE_PRODUCTDETAIL ------
+  detail_id                : 452                                                - class java.lang.Integer
+  id                       : 1                                                  - class java.lang.Integer
+  product_id               : 73                                                 - class java.lang.Integer
+11:20:04,816 INFO  - 
+------ INVOICE_SERVERDETAIL ------
+  detail_id                : 13                                                 - class java.lang.Integer
+  id                       : 6                                                  - class java.lang.Integer
+  server_id                : 10                                                 - class java.lang.Integer
+11:20:04,898 INFO  - 
+------ INVOICE_USERDETAIL ------
+  detail_id                : 452                                                - class java.lang.Integer
+  id                       : 1                                                  - class java.lang.Integer
+  user_id                  : 513                                                - class java.lang.Integer
+11:20:04,948 INFO  - 
+------ INVOICE_WORKSTATIONDETAIL ------
+  detail_id                : 1053                                               - class java.lang.Integer
+  id                       : 1                                                  - class java.lang.Integer
+  workstation_id           : 488                                                - class java.lang.Integer
+11:20:04,963 INFO  - 
+------ SOCIALACCOUNT_SOCIALACCOUNT ------
+  date_joined              : 2020-07-29 14:48:12.586365                         - class java.sql.Timestamp
+  extra_data               : {"@odata.context": "https://graph.microsoft.c      - class java.lang.String
+  id                       : 1                                                  - class java.lang.Integer
+  last_login               : 2022-02-02 13:24:21.898635                         - class java.sql.Timestamp
+  provider                 : azure                                              - class java.lang.String
+  uid                      : 36c4e598-a581-41a7-9944-b224d4a72a37               - class java.lang.String
+  user_id                  : 3                                                  - class java.lang.Integer
+11:20:04,970 INFO  - 
+------ SOCIALACCOUNT_SOCIALAPP ------
+  client_id                : 85c91c24-6f8c-4cc6-93fc-e1b0f1af417f               - class java.lang.String
+  id                       : 1                                                  - class java.lang.Integer
+  key                      : 79e217b9-5837-4d0b-a309-8dbbe22a2ae3               - class java.lang.String
+  name                     : Azure StorFollo IKT                                - class java.lang.String
+  provider                 : azure                                              - class java.lang.String
+  secret                   : iq1_FWPGt4.BiRu64y4-jrGmx~kY6~cB0-                 - class java.lang.String
+11:20:04,970 INFO  - 
+------ SOCIALACCOUNT_SOCIALAPP_SITES ------
+  id                       : 1                                                  - class java.lang.Integer
+  site_id                  : 1                                                  - class java.lang.Integer
+  socialapp_id             : 1                                                  - class java.lang.Integer
+11:20:05,006 INFO  - 
+------ SOCIALACCOUNT_SOCIALTOKEN ------
+  account_id               : 1                                                  - class java.lang.Integer
+  app_id                   : 1                                                  - class java.lang.Integer
+  expires_at               : 2022-02-02 14:25:34.592953                         - class java.sql.Timestamp
+  id                       : 1                                                  - class java.lang.Integer
+  token                    : eyJ0eXAiOiJKV1QiLCJub25jZSI6ImRjUXNtMWZsREtXO      - class java.lang.String
+  token_secret             :                                                    - class java.lang.String
+11:20:05,007 INFO  - CTGDIS088I Finished iterating.
+11:20:05,029 INFO  - CTGDIS100I Printing the Connector statistics.
+11:20:05,030 INFO  -  [StorFollo_Costs] Not used
+11:20:05,030 INFO  -  [ReadTables] Calls: 1
+11:20:05,031 INFO  - CTGDIS104I Total: Not used.
+11:20:05,031 INFO  - CTGDIS101I Finished printing the Connector statistics.
+11:20:05,031 INFO  - CTGDIS080I Terminated successfully (0 errors).

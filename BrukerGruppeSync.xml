@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig IDIversion="Created by SDI7.2 - 2019-07-08" created="Tue Jan 25 12:25:42 CET 2022" createdBy="Eddie Hartman" modified="Tue Feb 01 09:36:56 CET 2022" modifiedBy="Eddie Hartman" version="7.1.1">
+<?xml version="1.0" encoding="UTF-8"?><MetamergeConfig IDIversion="Created by SDI7.2 - 2019-07-08" created="Tue Jan 25 12:25:42 CET 2022" createdBy="Eddie Hartman" modified="Mon Feb 21 12:28:29 CET 2022" modifiedBy="Eddie Hartman" version="7.1.1">
     <Folder name="AssemblyLines">
         <AssemblyLine name="BrukerGruppeSync">
             <ModTime>1643619234274</ModTime>
@@ -692,84 +692,7 @@ task.dumpEntry(work);
                 <Schema name="AssemblyLineInitParams"/>
             </InitParams>
         </AssemblyLine>
-    <AssemblyLine name="ReadTypesFile">
-            <ModTime>1643228167660</ModTime>
-            <Settings/>
-            <Hooks/>
-            <CheckpointConfig/>
-            <SandboxConfig/>
-            <SimulationConfig>
-                <SimulationStates>
-                    <Component name="DumpWorkEntry" state="Enabled"/>
-                    <Component name="ActiveTypes" state="Enabled"/>
-                </SimulationStates>
-                <ProxySettings/>
-            </SimulationConfig>
-            <LogConfig/>
-            <ContainerEF name="EntryFeedContainer">
-                <Connector name="ActiveTypes">
-                    <InheritFrom>/Connectors/ActiveTypes</InheritFrom>
-                    <ModTime>1643228167660</ModTime>
-                    <ConnectorMode>Iterator</ConnectorMode>
-                    <ConnectorState>Enabled</ConnectorState>
-                    <Configuration>
-                        <InheritFrom>[parent]</InheritFrom>
-                    </Configuration>
-                    <Parser>
-                        <InheritFrom>[parent]</InheritFrom>
-                    </Parser>
-                    <AttributeMap name="Input">
-                        <InheritFrom>[parent]</InheritFrom>
-                    </AttributeMap>
-                    <AttributeMap name="Output">
-                        <InheritFrom>[parent]</InheritFrom>
-                    </AttributeMap>
-                    <DeltaSettings>
-                        <ModTime>1643228167660</ModTime>
-                        <WhenToCommit>After every database operation</WhenToCommit>
-                        <RowLocking>SERIALIZABLE</RowLocking>
-                        <ChangeDetectionMode>DETECT_ALL</ChangeDetectionMode>
-                    </DeltaSettings>
-                    <Schema name="Input">
-                        <InheritFrom>[parent]</InheritFrom>
-                    </Schema>
-                    <Schema name="Output">
-                        <InheritFrom>[parent]</InheritFrom>
-                    </Schema>
-                    <LinkCriteria>
-                        <InheritFrom>[parent]</InheritFrom>
-                    </LinkCriteria>
-                    <Hooks>
-                        <InheritFrom>[parent]</InheritFrom>
-                    </Hooks>
-                    <CheckpointConfig/>
-                    <SandboxConfig/>
-                    <Reconnect>
-                        <InheritFrom>[parent]</InheritFrom>
-                        <ReconnectRules/>
-                    </Reconnect>
-                    <Operations/>
-                    <PoolDefinition>
-                        <InheritFrom>[parent]</InheritFrom>
-                    </PoolDefinition>
-                    <PoolInstance/>
-                </Connector>
-            </ContainerEF>
-            <ContainerDF name="DataFlowContainer">
-                <ModTime>1643228167660</ModTime>
-                <Script name="DumpWorkEntry">
-                    <ModTime>1643228173294</ModTime>
-                    <parameter name="script"><![CDATA[// Dump the work entry
-task.dumpEntry(work);
-]]></parameter>
-                </Script>
-            </ContainerDF>
-            <ThreadOptions/>
-            <Operations/>
-            <InitParams>
-                <Schema name="AssemblyLineInitParams"/>
-            </InitParams>
-        </AssemblyLine>
+    
     <AssemblyLine name="BrukerGruppeSync 20220128 1322">
             <ModTime>1643372499009</ModTime>
             <Settings>
@@ -2049,6 +1972,928 @@ mail.send({
                 <Schema name="AssemblyLineInitParams"/>
             </InitParams>
         </AssemblyLine>
+    <AssemblyLine name="_testReadCosts">
+            <ModTime>1645015564420</ModTime>
+            <Settings>
+                <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+                <parameter name="automapattributes">false</parameter>
+                <parameter name="createTombstones">false</parameter>
+                <parameter name="includeGlobalPrologs">true</parameter>
+                <parameter name="includePrologs"><![CDATA[FunctionLibrary
+DatasetObject]]></parameter>
+                <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+            </Settings>
+            <Hooks/>
+            <CheckpointConfig/>
+            <SandboxConfig/>
+            <SimulationConfig>
+                <SimulationStates>
+                    <Component name="StorFollo_Costs" state="Enabled"/>
+                    <Component name="Set up Datasets" state="Enabled"/>
+                    <Component name="Find cloud app with hours &gt; 1" state="Enabled"/>
+                    <Component name="Find apps with some cloud and some not" state="Enabled"/>
+                    <Component name="App report" state="Enabled"/>
+                    <Component name="App report_1" state="Enabled"/>
+                </SimulationStates>
+                <ProxySettings/>
+            </SimulationConfig>
+            <LogConfig/>
+            <ContainerEF name="EntryFeedContainer">
+                <ModTime>1644487430028</ModTime>
+            </ContainerEF>
+            <ContainerDF name="DataFlowContainer">
+                <ModTime>1645015564420</ModTime>
+                <Connector name="StorFollo_Costs">
+                    <InheritFrom>/Connectors/StorFollo_Costs</InheritFrom>
+                    <ModTime>1644561973976</ModTime>
+                    <ConnectorMode>Iterator</ConnectorMode>
+                    <ConnectorState>Passive</ConnectorState>
+                    <Configuration>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1644487413198</ModTime>
+                    </Configuration>
+                    <Parser>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Parser>
+                    <AttributeMap name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1644487430028</ModTime>
+                        <AttributeMapItem>
+                            <Name>*</Name>
+                            <Type>simple</Type>
+                            <Simple>*</Simple>
+                        </AttributeMapItem>
+                    </AttributeMap>
+                    <AttributeMap name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </AttributeMap>
+                    <DeltaSettings>
+                        <ModTime>1644240520981</ModTime>
+                        <WhenToCommit>After every database operation</WhenToCommit>
+                        <RowLocking>SERIALIZABLE</RowLocking>
+                        <ChangeDetectionMode>DETECT_ALL</ChangeDetectionMode>
+                    </DeltaSettings>
+                    <Schema name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                    <Schema name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                    <LinkCriteria>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </LinkCriteria>
+                    <Hooks>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1644561973976</ModTime>
+                        <Hook name="after_initialize">
+                            <InheritFrom>[no inheritance]</InheritFrom>
+                            <Name>after_initialize</Name>
+                            <Script>sf = thisConnector.connector;</Script>
+                            <Enabled>true</Enabled>
+                        </Hook>
+                    </Hooks>
+                    <CheckpointConfig/>
+                    <SandboxConfig/>
+                    <Reconnect>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ReconnectRules/>
+                    </Reconnect>
+                    <Operations/>
+                    <PoolDefinition>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </PoolDefinition>
+                    <PoolInstance/>
+                </Connector>
+                <Script name="Set up Datasets">
+                    <InheritFrom>/Scripts/Set up Datasets</InheritFrom>
+                    <ModTime>1645097367973</ModTime>
+                </Script>
+                <Script name="Find cloud app with hours &gt; 1">
+                    <ModTime>1644850336707</ModTime>
+                    <parameter name="enabled">false</parameter>
+                    <parameter name="script"><![CDATA[badApps = {};
+report = [];
+
+for (id in apps.ids) {
+	app = apps.ids[id];
+	sector = app.sector_id;
+	badApps[sector] = badApps[sector] || new java.util.ArrayList();
+	if (app.cloud && app.internal_hours > 1) {
+		badApps[sector].add(app.name + " (" + app.customer_id + ") - hours: " + app.internal_hours)
+	}
+}
+
+for (sector in badApps) {
+	arr = badApps[sector].toArray();
+	if (arr.length == 0) continue;
+	
+	toShow = [];
+	java.util.Arrays.sort(arr);
+	for (a in arr) {
+		toShow.push(a);
+	}
+
+	report.push("\n\n-------- Cloud apps in " + sectors.get(sector).name 
+				+ "(" + sectors.get(sector).customer_id + ")"
+				+ " are set up with > 1 hours for intern drift:\n" 
+		+ toShow.join("\n"))
+}
+
+task.logmsg("\n" + report.join("\n") + "\n\n--");]]></parameter>
+                </Script>
+                <Script name="Find apps with some cloud and some not">
+                    <ModTime>1645015564420</ModTime>
+                    <parameter name="enabled">true</parameter>
+                    <parameter name="script"><![CDATA[names = apps.byField("name");
+report = [];
+
+lineCnt = 0;
+for (name in names) {
+	var objArray = names[name];
+	for (var app in objArray) {
+		var cloudCnt = 0;
+		if (app.cloud) {
+			cloudCnt++;
+		}
+	}
+	if (cloudCnt != objArray.length && cloudCnt > 0) {
+		report.push("   " + lj(name, 50, lineCnt++) + "  total: " + objArray.length + "  cloud: " + cloudCnt);		
+	}
+}
+
+task.logmsg("\n\n--------- Applications where only some are defined as 'i sky':\n" + report.join("\n"))]]></parameter>
+                </Script>
+                <Script name="App report">
+                    <ModTime>1644911959513</ModTime>
+                    <parameter name="enabled">false</parameter>
+                    <parameter name="script"><![CDATA[list = new java.util.ArrayList();
+
+linecnt = 0;
+for (id in apps.ids) {
+	app = apps.get(id);
+	name = app.name;
+	sector = sectors.get(app.sector_id).name;
+	cust = app.customer_id;
+	
+	extcost = app.external_cost;
+	license = app.licence_cost;
+	hours = app.internal_hours;
+	intcost = 650 * 12 * hours;
+
+	// Now get cost of servers attached to this app	
+	var serverCost = 0;
+	appservers = app_servers.get(app.id, "application_id");
+	for (appServer in appservers) {
+		server = servers.get(appServer.server_id);
+		product = products.get(server.product_id);
+		serverCost += product.price;
+	}
+	
+	list.add("   " + lj(name, 60, -1) 
+			+ "| " + lj(cust, 5) 
+			+ "| " + lj(sector, 15)
+			+ "| license: " + rj(license, 6) 
+//			+ "| hours: " + rj(hours, 2)
+			+ "| driftkost: " + rj(intcost, 6)
+			+ "| serverkost: " + rj(serverCost, 5));
+}
+
+arr = list.toArray();
+java.util.Arrays.sort(arr);
+
+task.logmsg("\n-------- Application costs:\n" + arr.join("\n"))]]></parameter>
+                </Script>
+                <Script name="App report_1">
+                    <ModTime>1645015395804</ModTime>
+                    <parameter name="enabled">false</parameter>
+                    <parameter name="script"><![CDATA[list = new java.util.ArrayList();
+
+appList = apps.get("eDemokrati", "name");
+app = appList[0];
+linecnt = 0;
+name = app.name;
+sector = sectors.get(app.sector_id).name;
+cust = app.customer_id;
+
+extcost = app.external_cost;
+license = app.licence_cost;
+hours = app.internal_hours;
+intcost = 650 * 12 * hours;
+
+// Now get cost of servers attached to this app	
+var serverCost = 0;
+appservers = app_servers.get(app.id, "application_id");
+for (appServer in appservers) {
+	server = servers.get(appServer.server_id);
+	product = products.get(server.product_id);
+	prodDelivery = product_delivery.get(product.id);
+}
+
+i = 42;]]></parameter>
+                </Script>
+            </ContainerDF>
+            <ThreadOptions/>
+            <Operations/>
+            <InitParams>
+                <Schema name="AssemblyLineInitParams"/>
+            </InitParams>
+        </AssemblyLine>
+    <AssemblyLine name="_testPureservice">
+            <ModTime>1644425385056</ModTime>
+            <Settings/>
+            <Hooks/>
+            <CheckpointConfig/>
+            <SandboxConfig/>
+            <SimulationConfig>
+                <SimulationStates>
+                    <Component name="Test" state="Enabled"/>
+                </SimulationStates>
+                <ProxySettings/>
+            </SimulationConfig>
+            <LogConfig/>
+            <ContainerEF name="EntryFeedContainer"/>
+            <ContainerDF name="DataFlowContainer">
+                <ModTime>1644425385056</ModTime>
+                <Script name="Test">
+                    <ModTime>1644425385056</ModTime>
+                    <parameter name="script"><![CDATA[var url = "https://storfolloikt.pureservice.com/api/ticket/?start=10&limit=5'";
+var url2 = "https://storfolloikt.pureservice.com/api/status";
+var urlAuth = "https://pureservice.com/authentication";
+var authRest = "?username=eddie.hartman@storfolloikt.no&password=Mirakami23a!&role=20";
+var http = system.getConnector("ibmdi.HTTPClient");
+http.setParam("url", urlAuth + authRest);
+
+var requestEntry = system.newEntry();
+//var apiKey = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJpc3MiOiJQdXJlc2VydmljZS5BcGkuS2V5IiwianRpIjoiZEtnSHJVU1lzTDllR3V5cXNWWUNZNHZneGd0dlowQVdINWtFSEE5QnpEemcyS3Jhdms1UHFDbjc4QTdua1owZk9UUGJGWmZUUjlUVGduQjhmMmVmRmc9PSJ9.Kkgz9f0W-2TnuwDMhcVx-9ilhulQGr1ul2k7d8awfNc";
+//requestEntry["http.X-Authorization-Key"] = apiKey;
+//requestEntry["http.Accept"] = "application/vnd.api+json";
+
+http.initialize(null);
+
+responseEntry = http.queryReply(requestEntry);
+
+task.dumpEntry(responseEntry);]]></parameter>
+                </Script>
+            </ContainerDF>
+            <ThreadOptions/>
+            <Operations/>
+            <InitParams>
+                <Schema name="AssemblyLineInitParams"/>
+            </InitParams>
+        </AssemblyLine>
+    <AssemblyLine name="_testReadAllTables">
+            <ModTime>1645013323179</ModTime>
+            <Settings>
+                <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+                <parameter name="automapattributes">false</parameter>
+                <parameter name="createTombstones">false</parameter>
+                <parameter name="includeGlobalPrologs">true</parameter>
+                <parameter name="includePrologs"><![CDATA[FunctionLibrary
+DatasetObject]]></parameter>
+                <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+            </Settings>
+            <Hooks/>
+            <CheckpointConfig/>
+            <SandboxConfig/>
+            <SimulationConfig>
+                <SimulationStates>
+                    <Component name="StorFollo_Costs" state="Enabled"/>
+                    <Component name="ReadTables" state="Enabled"/>
+                </SimulationStates>
+                <ProxySettings/>
+            </SimulationConfig>
+            <LogConfig/>
+            <ContainerEF name="EntryFeedContainer">
+                <ModTime>1644487430028</ModTime>
+            </ContainerEF>
+            <ContainerDF name="DataFlowContainer">
+                <ModTime>1645013323179</ModTime>
+                <Connector name="StorFollo_Costs">
+                    <InheritFrom>/Connectors/StorFollo_Costs</InheritFrom>
+                    <ModTime>1644561973976</ModTime>
+                    <ConnectorMode>Iterator</ConnectorMode>
+                    <ConnectorState>Passive</ConnectorState>
+                    <Configuration>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1644487413198</ModTime>
+                    </Configuration>
+                    <Parser>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Parser>
+                    <AttributeMap name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1644487430028</ModTime>
+                        <AttributeMapItem>
+                            <Name>*</Name>
+                            <Type>simple</Type>
+                            <Simple>*</Simple>
+                        </AttributeMapItem>
+                    </AttributeMap>
+                    <AttributeMap name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </AttributeMap>
+                    <DeltaSettings>
+                        <ModTime>1644240520981</ModTime>
+                        <WhenToCommit>After every database operation</WhenToCommit>
+                        <RowLocking>SERIALIZABLE</RowLocking>
+                        <ChangeDetectionMode>DETECT_ALL</ChangeDetectionMode>
+                    </DeltaSettings>
+                    <Schema name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                    <Schema name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                    <LinkCriteria>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </LinkCriteria>
+                    <Hooks>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1644561973976</ModTime>
+                        <Hook name="after_initialize">
+                            <InheritFrom>[no inheritance]</InheritFrom>
+                            <Name>after_initialize</Name>
+                            <Script>sf = thisConnector.connector;</Script>
+                            <Enabled>true</Enabled>
+                        </Hook>
+                    </Hooks>
+                    <CheckpointConfig/>
+                    <SandboxConfig/>
+                    <Reconnect>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ReconnectRules/>
+                    </Reconnect>
+                    <Operations/>
+                    <PoolDefinition>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </PoolDefinition>
+                    <PoolInstance/>
+                </Connector>
+                <Script name="ReadTables">
+                    <ModTime>1645013323179</ModTime>
+                    <parameter name="enabled">true</parameter>
+                    <parameter name="script"><![CDATA[var tables = sf.queryTables().toArray();
+var lookfor = {server: 0};
+
+java.util.Arrays.sort(tables);
+
+for (var table in tables) {
+	task.logmsg("--> " + table);
+}
+
+for (var table in tables) {
+	sf.execSQLSelect("select * from " + table);
+	var e = sf.getNextSQLSelectEntry();
+	if (e == null) continue;
+	var names = e.getAttributeNames();
+	java.util.Arrays.sort(names);
+	var atts = [];
+	for (var name in names) {
+		var val = e.getObject(name);
+
+		var str = "  " + lj(name,25) + ": " 
+			+ lj((e.getString(name) || "").substring(0, 45), 50) + " - ";
+		try {
+			str += e.getObject(name).getClass();
+		} catch (ex) {
+			str += typeof e.getObject(name);
+		}
+		atts.push(str);
+	}
+	//task.logmsg("\n------ " + table.toUpperCase() + " ------\n" + atts.join("\n"));
+}]]></parameter>
+                </Script>
+            </ContainerDF>
+            <ThreadOptions/>
+            <Operations/>
+            <InitParams>
+                <Schema name="AssemblyLineInitParams"/>
+            </InitParams>
+        </AssemblyLine>
+    <AssemblyLine name="_testReadCosts 20220214 1241">
+            <ModTime>1644838573021</ModTime>
+            <Settings/>
+            <Hooks/>
+            <CheckpointConfig/>
+            <SandboxConfig/>
+            <SimulationConfig>
+                <SimulationStates>
+                    <Component name="StorFollo_Costs" state="Enabled"/>
+                    <Component name="Dataset object" state="Enabled"/>
+                    <Component name="Do queries" state="Enabled"/>
+                </SimulationStates>
+                <ProxySettings/>
+            </SimulationConfig>
+            <LogConfig/>
+            <ContainerEF name="EntryFeedContainer">
+                <ModTime>1644487430028</ModTime>
+            </ContainerEF>
+            <ContainerDF name="DataFlowContainer">
+                <ModTime>1644838573021</ModTime>
+                <Connector name="StorFollo_Costs">
+                    <InheritFrom>/Connectors/StorFollo_Costs</InheritFrom>
+                    <ModTime>1644561973976</ModTime>
+                    <ConnectorMode>Iterator</ConnectorMode>
+                    <ConnectorState>Passive</ConnectorState>
+                    <Configuration>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1644487413198</ModTime>
+                    </Configuration>
+                    <Parser>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Parser>
+                    <AttributeMap name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1644487430028</ModTime>
+                        <AttributeMapItem>
+                            <Name>*</Name>
+                            <Type>simple</Type>
+                            <Simple>*</Simple>
+                        </AttributeMapItem>
+                    </AttributeMap>
+                    <AttributeMap name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </AttributeMap>
+                    <DeltaSettings>
+                        <ModTime>1644240520981</ModTime>
+                        <WhenToCommit>After every database operation</WhenToCommit>
+                        <RowLocking>SERIALIZABLE</RowLocking>
+                        <ChangeDetectionMode>DETECT_ALL</ChangeDetectionMode>
+                    </DeltaSettings>
+                    <Schema name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                    <Schema name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                    <LinkCriteria>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </LinkCriteria>
+                    <Hooks>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1644561973976</ModTime>
+                        <Hook name="after_initialize">
+                            <InheritFrom>[no inheritance]</InheritFrom>
+                            <Name>after_initialize</Name>
+                            <Script>sf = thisConnector.connector;</Script>
+                            <Enabled>true</Enabled>
+                        </Hook>
+                    </Hooks>
+                    <CheckpointConfig/>
+                    <SandboxConfig/>
+                    <Reconnect>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ReconnectRules/>
+                    </Reconnect>
+                    <Operations/>
+                    <PoolDefinition>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </PoolDefinition>
+                    <PoolInstance/>
+                </Connector>
+                <Script name="Dataset object">
+                    <ModTime>1644838573021</ModTime>
+                    <parameter name="script"><![CDATA[var Dataset = function(ctr, stmt, flds) {
+	this.keys = {};
+	
+	this.initialize = function() {
+		var cnt = 0;
+		var e;
+		var data;
+		var fldArray = (flds instanceof Array) ? flds : [flds];
+		var custId;
+		
+		task.logmsg("Executing " + stmt + " for keys " + fldArray.join(", "));
+		
+		try {
+			ctr.execSQLSelect(stmt);
+			while ((e = ctr.getNextSQLSelectEntry()) != null) {
+				data = fromJson(e.toJSON());
+				
+				custId = e.getString("customer_id") || "";
+				
+				for (var fldCnt = 0; fldCnt < fldArray.length; fldCnt++) {
+					var fld = fldArray[fldCnt].toLowerCase();
+					this.keys[fld] = this.keys[fld] || {};
+					
+					var val = (e.getString(fld) || "").trim();
+					if (!val) {
+						task.logmsg("ERROR", "No value for " + fld + " found for " + e.toJSON());
+					} else {
+						var useKey = (fld == "id") ? val : custId + val;
+						if (this.keys[fld][useKey]) {
+							task.logmsg("ERROR", "Duplicate key ("
+											+ fld + " : " + useKey
+											+ ") for " + e.toJSON()
+											+ "\n     - previous: " + toJson(this.keys[fld][useKey]));
+						}
+						this.keys[fld][useKey] = data;	
+					}
+				}
+				cnt++;
+			}
+		} catch (ex){
+			task.logmsg("ERROR", "Error performing statment: " + stmt + " - " + ex);
+		}
+		task.logmsg("  -> found " + cnt + " objects");
+	}
+	
+	// Here comes initialization
+	
+	this.initialize();
+
+	return this;
+}]]></parameter>
+                </Script>
+                <Script name="Do queries">
+                    <ModTime>1644838429556</ModTime>
+                    <parameter name="script"><![CDATA[apps = new Dataset(sf, "select * from costs_application", ["id","name"]);
+
+for (name in apps.keys) {
+	task.logmsg(name)
+	for (obj in apps.keys[name]) {
+		task.logmsg("   " + toJson(obj));
+	}
+}]]></parameter>
+                </Script>
+            </ContainerDF>
+            <ThreadOptions/>
+            <Operations/>
+            <InitParams>
+                <Schema name="AssemblyLineInitParams"/>
+            </InitParams>
+        </AssemblyLine>
+    <AssemblyLine name="_testSearchAllTables">
+            <ModTime>1645107794248</ModTime>
+            <Settings>
+                <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+                <parameter name="automapattributes">false</parameter>
+                <parameter name="createTombstones">false</parameter>
+                <parameter name="includeGlobalPrologs">true</parameter>
+                <parameter name="includePrologs"><![CDATA[FunctionLibrary
+DatasetObject
+]]></parameter>
+                <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+            </Settings>
+            <Hooks/>
+            <CheckpointConfig/>
+            <SandboxConfig/>
+            <SimulationConfig>
+                <SimulationStates>
+                    <Component name="StorFollo_Costs" state="Enabled"/>
+                    <Component name="Set up Datasets" state="Enabled"/>
+                    <Component name="ReadTables" state="Enabled"/>
+                </SimulationStates>
+                <ProxySettings/>
+            </SimulationConfig>
+            <LogConfig/>
+            <ContainerEF name="EntryFeedContainer">
+                <ModTime>1644487430028</ModTime>
+            </ContainerEF>
+            <ContainerDF name="DataFlowContainer">
+                <ModTime>1645107794248</ModTime>
+                <Connector name="StorFollo_Costs">
+                    <InheritFrom>/Connectors/StorFollo_Costs</InheritFrom>
+                    <ModTime>1644561973976</ModTime>
+                    <ConnectorMode>Iterator</ConnectorMode>
+                    <ConnectorState>Passive</ConnectorState>
+                    <Configuration>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1644487413198</ModTime>
+                    </Configuration>
+                    <Parser>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Parser>
+                    <AttributeMap name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1644487430028</ModTime>
+                        <AttributeMapItem>
+                            <Name>*</Name>
+                            <Type>simple</Type>
+                            <Simple>*</Simple>
+                        </AttributeMapItem>
+                    </AttributeMap>
+                    <AttributeMap name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </AttributeMap>
+                    <DeltaSettings>
+                        <ModTime>1644240520981</ModTime>
+                        <WhenToCommit>After every database operation</WhenToCommit>
+                        <RowLocking>SERIALIZABLE</RowLocking>
+                        <ChangeDetectionMode>DETECT_ALL</ChangeDetectionMode>
+                    </DeltaSettings>
+                    <Schema name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                    <Schema name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                    <LinkCriteria>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </LinkCriteria>
+                    <Hooks>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1644561973976</ModTime>
+                        <Hook name="after_initialize">
+                            <InheritFrom>[no inheritance]</InheritFrom>
+                            <Name>after_initialize</Name>
+                            <Script>sf = thisConnector.connector;</Script>
+                            <Enabled>true</Enabled>
+                        </Hook>
+                    </Hooks>
+                    <CheckpointConfig/>
+                    <SandboxConfig/>
+                    <Reconnect>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ReconnectRules/>
+                    </Reconnect>
+                    <Operations/>
+                    <PoolDefinition>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </PoolDefinition>
+                    <PoolInstance/>
+                </Connector>
+                <Script name="Set up Datasets">
+                    <ModTime>1644916874479</ModTime>
+                    <parameter name="script"><![CDATA[apps = new Dataset(sf, "costs_application");
+sectors = new Dataset(sf, "costs_sector");
+servers = new Dataset(sf, "costs_server");
+app_servers = new Dataset(sf, "costs_application_servers");
+products = new Dataset(sf, "costs_product");
+product_delivery = new Dataset(sf, "costs_productdelivery");
+productgroup_products = new Dataset(sf, "COSTS_PRODUCTGROUP_PRODUCTS");]]></parameter>
+                </Script>
+                <Script name="ReadTables">
+                    <ModTime>1645107794248</ModTime>
+                    <parameter name="enabled">true</parameter>
+                    <parameter name="script"><![CDATA[var tables = sf.queryTables().toArray();
+//var lookfor = [5, 72, 40, 360, "FKDMZSVWEB04"];
+var lookfor = ["Arbeidstimer"];
+
+java.util.Arrays.sort(tables);
+
+for (var table in tables) {
+	if (!table.startsWith("costs_")) continue;
+	
+	sf.execSQLSelect("select * from " + table);
+	while ((e = sf.getNextSQLSelectEntry()) != null) {
+		var names = e.getAttributeNames();
+		java.util.Arrays.sort(names);
+		for (var name in names) {
+			if (name.endsWith("id")) continue;
+			
+			var val = e.getString(name);
+			if (val == null) continue;
+			val = val.toLowerCase().trim();
+			for (i = 0; i < lookfor.length; i++) {
+				lf = String(lookfor[i]).toLowerCase().trim();
+				if (val == lf) {
+					task.logmsg("--> " + table + "  " + name + ": " + val + " - " + e.toJSON());
+				}
+			}
+		}
+	}
+	if (e == null) continue;
+	//task.logmsg("\n------ " + table.toUpperCase() + " ------\n" + atts.join("\n"));
+}]]></parameter>
+                </Script>
+            </ContainerDF>
+            <ThreadOptions/>
+            <Operations/>
+            <InitParams>
+                <Schema name="AssemblyLineInitParams"/>
+            </InitParams>
+        </AssemblyLine>
+        <AssemblyLine name="_testSearch">
+            <ModTime>1645174749329</ModTime>
+            <Settings>
+                <parameter name="ALPoolSettingsDialog">showALPoolSettings</parameter>
+                <parameter name="automapattributes">false</parameter>
+                <parameter name="createTombstones">false</parameter>
+                <parameter name="includeGlobalPrologs">true</parameter>
+                <parameter name="includePrologs"><![CDATA[FunctionLibrary
+DatasetObject]]></parameter>
+                <parameter name="nullBehaviorDialog">showNullBehavior</parameter>
+            </Settings>
+            <Hooks/>
+            <CheckpointConfig/>
+            <SandboxConfig/>
+            <SimulationConfig>
+                <SimulationStates>
+                    <Component name="StorFollo_Costs" state="Enabled"/>
+                    <Component name="Set up Datasets" state="Enabled"/>
+                    <Component name="ReadTables" state="Enabled"/>
+                    <Component name="Debug" state="Enabled"/>
+                </SimulationStates>
+                <ProxySettings/>
+            </SimulationConfig>
+            <LogConfig/>
+            <ContainerEF name="EntryFeedContainer">
+                <ModTime>1644487430028</ModTime>
+            </ContainerEF>
+            <ContainerDF name="DataFlowContainer">
+                <ModTime>1645174749329</ModTime>
+                <Connector name="StorFollo_Costs">
+                    <InheritFrom>/Connectors/StorFollo_Costs</InheritFrom>
+                    <ModTime>1644561973976</ModTime>
+                    <ConnectorMode>Iterator</ConnectorMode>
+                    <ConnectorState>Passive</ConnectorState>
+                    <Configuration>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1644487413198</ModTime>
+                    </Configuration>
+                    <Parser>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Parser>
+                    <AttributeMap name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1644487430028</ModTime>
+                        <AttributeMapItem>
+                            <Name>*</Name>
+                            <Type>simple</Type>
+                            <Simple>*</Simple>
+                        </AttributeMapItem>
+                    </AttributeMap>
+                    <AttributeMap name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </AttributeMap>
+                    <DeltaSettings>
+                        <ModTime>1644240520981</ModTime>
+                        <WhenToCommit>After every database operation</WhenToCommit>
+                        <RowLocking>SERIALIZABLE</RowLocking>
+                        <ChangeDetectionMode>DETECT_ALL</ChangeDetectionMode>
+                    </DeltaSettings>
+                    <Schema name="Input">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                    <Schema name="Output">
+                        <InheritFrom>[parent]</InheritFrom>
+                    </Schema>
+                    <LinkCriteria>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </LinkCriteria>
+                    <Hooks>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ModTime>1644561973976</ModTime>
+                        <Hook name="after_initialize">
+                            <InheritFrom>[no inheritance]</InheritFrom>
+                            <Name>after_initialize</Name>
+                            <Script>sf = thisConnector.connector;</Script>
+                            <Enabled>true</Enabled>
+                        </Hook>
+                    </Hooks>
+                    <CheckpointConfig/>
+                    <SandboxConfig/>
+                    <Reconnect>
+                        <InheritFrom>[parent]</InheritFrom>
+                        <ReconnectRules/>
+                    </Reconnect>
+                    <Operations/>
+                    <PoolDefinition>
+                        <InheritFrom>[parent]</InheritFrom>
+                    </PoolDefinition>
+                    <PoolInstance/>
+                </Connector>
+                <Script name="Set up Datasets">
+                    <InheritFrom>/Scripts/Set up Datasets</InheritFrom>
+                    <ModTime>1645097493070</ModTime>
+                </Script>
+                <Script name="ReadTables">
+                    <ModTime>1645012837233</ModTime>
+                    <parameter name="enabled">false</parameter>
+                    <parameter name="script"><![CDATA[var tables = sf.queryTables().toArray();
+var lookfor = [40, 360, "FKDMZSVWEB04"];
+
+java.util.Arrays.sort(tables);
+
+for (var table in tables) {
+	if (!table.startsWith("costs_")) continue;
+	
+	sf.execSQLSelect("select * from " + table);
+	while ((e = sf.getNextSQLSelectEntry()) != null) {
+		var names = e.getAttributeNames();
+		java.util.Arrays.sort(names);
+		for (var name in names) {
+			if (name.endsWith("id")) continue;
+			
+			var val = e.getString(name);
+			if (val == null) continue;
+			for (i = 0; i < lookfor.length; i++) {
+				lf = String(lookfor[i]);
+				if (lf.equalsIgnoreCase(val)) {
+					task.logmsg("--> " + table + "  " + name + ": " + val + " - " + e.toJSON());
+				}
+			}
+		}
+	}
+	if (e == null) continue;
+	//task.logmsg("\n------ " + table.toUpperCase() + " ------\n" + atts.join("\n"));
+}]]></parameter>
+                </Script>
+                <Script name="Debug">
+                    <ModTime>1645174749329</ModTime>
+                    <parameter name="script"><![CDATA[appName = "eDemokrati";
+
+log("====================== LOOKING FOR APP: " + appName);
+appArray = apps.findByField("name", appName);
+
+for (app in appArray) {
+	log("\n\n---------------- Found: " + work.fromJSON(toJson(app)));
+	
+	appServers = app_servers.findByField("application_id", app.id);
+	
+	for (appServer in appServers) {
+		map = new java.util.HashMap();
+
+		itemCnt = 0;
+		server = servers.get(appServer.server_id);
+		map.put((++itemCnt) + ". server", server);
+
+		allAppsWithServer = app_servers.get(server.id, "server_id");
+		server.num_apps_on_server = allAppsWithServer.length;
+		//map.put((++itemCnt) + ". allAppsWithServer", allAppsWithServer);
+		
+		//product = products.get(server.product_id);
+		//map.put((++itemCnt) + ". product", product);
+
+		product_group = product_groups.get(server.product_group_id);
+		map.put((++itemCnt) + ". product_group", product_group);
+		
+		// Now from product group to related products - hourly and other
+		server.hourly_cost = 0;
+		server.other_cost = 0;
+		prodGroupList = productgroup_products.get(product_group.id, "productgroup_id");
+		for (prodGroup in prodGroupList) {
+			product = products.get(prodGroup.product_id);
+			product_type = product_types.get(product.type_id);
+			if (product_type.type == "Arbeidstimer") {
+				server.hourly_cost += product.price;
+			} else {
+				server.other_cost += product.price;
+			}
+		}
+		server.other_cost = Math.round(server.other_cost / server.num_apps_on_server);
+		server.hourly_cost = Math.round(server.hourly_cost / server.num_apps_on_server);
+		
+		//map.put((++itemCnt) + ". productgroup_product", prodGroupList);
+		
+		/*
+		product_type = product_types.get(server.type_id);
+		map.put((++itemCnt) + ". product_type", product_type);
+		
+ * 		arr = product_delivery.findByField("product_id", product.id);
+		map.put((++itemCnt) + ". product_delivery", arr);
+
+  		productgroup_product = productgroup_products.get(product.id,"product_id");
+		map.put((++itemCnt) + ". productgroup_product", productgroup_product);
+		
+  		arr = accountings.findByField("project", app.identifier);
+		map.put((++itemCnt) + ". accounting", arr);
+		
+		invoice_serverdetail = invoice_serverdetails.get(server.id, "server_id");
+		//map.put((++itemCnt) + ". invoice_serverdetails", invoice_serverdetail);
+		det = new java.util.ArrayList();
+		for (inv_det in invoice_serverdetail) {
+			invoice_linedetail = invoice_linedetails.get(inv_det.detail_id);
+			invoice_line = invoice_lines.get(invoice_linedetail.invoice_line_id);
+			det.add(invoice_line);
+		}
+		map.put((++itemCnt) + ". invoice_line", det.toArray());
+		*/
+
+		/*
+		invoice_linedetail = invoice_linedetails.get(app.id, "application_id");
+		map.put((++itemCnt) + ". invoice_linedetail", invoice_linedetail);
+		
+		invoice_line = invoice_lines.get(invoice_linedetail.invoice_line_id);
+		map.put((++itemCnt) + ". invoice_line", invoice_line);
+		*/
+		// Now display everything
+		keys = map.keySet().toArray();
+		java.util.Arrays.sort(keys);
+		
+		for (key in keys) {
+			obj = map.get(key);
+			log("\n--------------------- " + key.toUpperCase() + " ----")
+			if ((typeof obj).startsWith("[")) {
+				cnt = 1;
+				for (item in obj) {
+					log("\n  -- item " + cnt++ + "--\n" + work.fromJSON(toJson(item)));
+				}		
+			} else {
+				log(work.fromJSON(toJson(obj)));
+			}
+		}
+	}
+}]]></parameter>
+                </Script>
+            </ContainerDF>
+            <ThreadOptions/>
+            <Operations/>
+            <InitParams>
+                <Schema name="AssemblyLineInitParams"/>
+            </InitParams>
+        </AssemblyLine>
     </Folder>
     <Folder name="Connectors">
         
@@ -2176,11 +3021,78 @@ mail.send({
             </PoolDefinition>
             <PoolInstance/>
         </Connector>
+    <Connector name="StorFollo_Costs">
+            <InheritFrom>system:/Connectors/ibmdi.JDBC</InheritFrom>
+            <ModTime>1644487392797</ModTime>
+            <ConnectorMode>Iterator</ConnectorMode>
+            <ConnectorState>Enabled</ConnectorState>
+            <Configuration>
+                <InheritFrom>[parent]</InheritFrom>
+                <ModTime>1644487392797</ModTime>
+                <parameter name="jdbcDriver">@SUBSTITUTE{property.BrukerGruppeSync:sfcosts.driver}</parameter>
+                <parameter name="jdbcLogin">@SUBSTITUTE{property.BrukerGruppeSync:sfcosts.username}</parameter>
+                <parameter name="jdbcPassword">@SUBSTITUTE{property.BrukerGruppeSync:sfcosts.password}</parameter>
+                <parameter name="jdbcSource">@SUBSTITUTE{property.BrukerGruppeSync:sfcosts.url}</parameter>
+                <parameter name="jdbcTable">invoice_invoice</parameter>
+            </Configuration>
+            <Parser>
+                <InheritFrom>[parent]</InheritFrom>
+                <ModTime>1644240005980</ModTime>
+            </Parser>
+            <AttributeMap name="Input">
+                <InheritFrom>[parent]</InheritFrom>
+                <ModTime>1644240005980</ModTime>
+            </AttributeMap>
+            <AttributeMap name="Output">
+                <InheritFrom>[parent]</InheritFrom>
+                <ModTime>1644240005980</ModTime>
+            </AttributeMap>
+            <DeltaSettings>
+                <ModTime>1644240017600</ModTime>
+                <WhenToCommit>After every database operation</WhenToCommit>
+                <RowLocking>SERIALIZABLE</RowLocking>
+                <ChangeDetectionMode>DETECT_ALL</ChangeDetectionMode>
+            </DeltaSettings>
+            <Schema name="Input">
+                <InheritFrom>[parent]</InheritFrom>
+                <ModTime>1644240005980</ModTime>
+            </Schema>
+            <Schema name="Output">
+                <InheritFrom>[parent]</InheritFrom>
+                <ModTime>1644240005980</ModTime>
+            </Schema>
+            <LinkCriteria>
+                <InheritFrom>[parent]</InheritFrom>
+                <ModTime>1644240005980</ModTime>
+            </LinkCriteria>
+            <Hooks>
+                <InheritFrom>[parent]</InheritFrom>
+                <ModTime>1644240005980</ModTime>
+            </Hooks>
+            <CheckpointConfig/>
+            <SandboxConfig/>
+            <Reconnect>
+                <InheritFrom>[parent]</InheritFrom>
+                <ReconnectRules/>
+            </Reconnect>
+            <Operations/>
+            <PoolDefinition>
+                <InheritFrom>[parent]</InheritFrom>
+                <ModTime>1644240017758</ModTime>
+                <Enabled>false</Enabled>
+                <MinPoolSize>0</MinPoolSize>
+                <MaxPoolSize>0</MaxPoolSize>
+                <PurgeInterval>0</PurgeInterval>
+                <InitializeAttempts>1</InitializeAttempts>
+                <InitializeSleepInterval>0</InitializeSleepInterval>
+            </PoolDefinition>
+            <PoolInstance/>
+        </Connector>
     </Folder>
     <Folder name="Parsers"/>
     <Folder name="Scripts">
         <Script name="Logger">
-            <ModTime>1643111271611</ModTime>
+            <ModTime>1643707006274</ModTime>
             <parameter name="includeFiles"/>
             <parameter name="script"><![CDATA[_VRS = "20220125 1228"; // Initial version
 
@@ -2223,50 +3135,13 @@ var Logger = function() {
 	
 	// Init code
 	this.init();
+	
+	return this; // Always return this
 }
 
 var log = new Logger();]]></parameter>
         </Script>
-        <Script name="Mapper">
-            <ModTime>1643226056614</ModTime>
-            <parameter name="includeFiles"/>
-            <parameter name="script"><![CDATA[// Must load Logger before this script!!
-
-_VRS = "20220125 1255"; // Initial version
-
-var Mapper = function(mappingFileName) {
-	this.mappingFileName = mappingFileName || null;
-	this.map = {};
-	
-	// Initialization method - prints out version
-	this.init = function() {
-		log.msg("Mapper v" + _VRS);
-		
-		this.readInMappingFile();
-	}
-	
-	// Reads in the mapping file
-	this.readInMappingFile = function() {
-		if (this.mappingFileName == null) {
-			throw "No mapping file specified in constructor to Mapper";
-		}
-		
-		//Read mapping file
-		var file = system.openFileForInput(this.mappingFileName);
-		this.map = {};
-		while((line = file.readLine()) != null) {
-			var parts = line.split("=");
-			if (parts.length == 2) {
-				this.map[parts[0].trim()] = parts[1].trim();
-			}
-		}
-		file.close();
-	}
-	
-	// Init code
-	this.init();
-}]]></parameter>
-        </Script>
+        
     <Script name="ScriptLib">
             <ModTime>1643624207687</ModTime>
             <parameter name="includeFiles"/>
@@ -2550,6 +3425,693 @@ function isActive(user) {
 	}
 }]]></parameter>
         </Script>
+    <Script name="ExcelObj">
+            <ModTime>1643707283600</ModTime>
+            <parameter name="includeFiles"/>
+            <parameter name="script"><![CDATA[// The args properties are optional and include:
+//
+//		filenameTemplate: optional name (with subst-tokens) of the Excel sheet, in case it is written to disk
+//    	sheetFileName: filepath for the Excel Sheet used by write() method, default is "$TDI_SOLDIR/_ExcelSheet.xlsx
+//						NOTE: may contain eval tokens in curly braces - support javascript
+//		columnsFileName: filepath to the text file with ordered names of Sheet columns, one per line
+//	 OR columnNames: semicolon-separated list of field names (instead of file)
+//		entry: Entry that the sheetFileName evaluation should use for eval tokens - i.e. {attribute-name}
+//
+var ExcelObj = function (args)
+{
+	this.vrs = "20220201 1015"; // First version
+
+	args = args || {};
+
+	this.filenameTemplate = typeof(args) == "string" ? args : (args.fileName || "_ExcelWorkbook.xlsx");
+	this.filename = "_ExcelWorkbook.xlsx";
+	this.sheetname = args.sheetname || "Data";
+	this.entry = args.entry || system.newEntry();
+	this.map = new Mapper();
+	this.columns = null;
+	this.columnsFileName = args.columnsFileName || null;
+	this.columnNames = args.columnNames || null;
+	
+	this.workbook = null;
+	this.spreadsheet = {};
+	this.rowCount = {} ;
+	
+	// Used for copying spreadsheets
+	this.workbooks = {};
+	this.sheets = {};
+	this.rowIndex = {};
+	
+	// Local log function
+	this.log = function(lvl, msg, throwit) {
+		throwit = throwit || false;
+		
+		if (typeof lvl == "undefined") {
+			msg = "";
+			lvl = "INFO";
+		} else
+		if (typeof msg == "undefined") {
+			msg = lvl;
+			lvl = "INFO";
+		}
+		
+		log.msg(lvl, "[ExcelObj] " + msg);
+		
+		if (throwit) throw "[ExcelObj] " + msg;
+	}
+	
+	// Write the workbook to a file
+	this.write = function(useFileName) {
+		useFileName = useFileName || this.filename;
+		var fos = new java.io.FileOutputStream(new java.io.File(useFileName));
+		this.workbook.write(fos);
+		fos.close();
+	}
+	
+	// Return the workbook as a byte array
+	this.getBytes = function() {
+		var fos = new java.io.ByteArrayOutputStream();
+		this.workbook.write(fos);
+		fos.close();
+		
+		return fos.toByteArray();
+	}
+	
+	// Add an Entry as a row to this spreadsheet, using the field list specified
+	this.addRow = function(entry, toSheetName, columns) {
+		columns = columns || this.columns;
+		toSheetName = toSheetName || this.sheetname;
+		
+		var row;
+		if (this.workbook == null) {
+			//Blank Document
+			this.workbook = new org.apache.poi.xssf.usermodel.XSSFWorkbook();
+			
+			var boldFont = this.workbook.createFont();
+	        boldFont.setBold(true);
+	
+	        this.headerStyle = this.workbook.createCellStyle();
+	        this.headerStyle.setBorderBottom(org.apache.poi.ss.usermodel.BorderStyle.MEDIUM);
+	        this.headerStyle.setBorderTop(org.apache.poi.ss.usermodel.BorderStyle.MEDIUM);
+	        this.headerStyle.setBorderRight(org.apache.poi.ss.usermodel.BorderStyle.MEDIUM);
+	        this.headerStyle.setBorderLeft(org.apache.poi.ss.usermodel.BorderStyle.MEDIUM);
+	        this.headerStyle.setFillForegroundColor(200);
+	        this.headerStyle.setFillPattern(org.apache.poi.ss.usermodel.FillPatternType.SOLID_FOREGROUND);
+	        //headerStyle.setVerticalAlignment(org.apache.poi.ss.usermodel.VerticalAlignment.TOP);
+	        this.headerStyle.setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment.CENTER);
+	        this.headerStyle.setFont(boldFont);			
+
+			this.cellStyle = this.workbook.createCellStyle();
+			this.cellStyle.setWrapText(true);
+	        this.cellStyle.setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment.LEFT);
+
+			this.boldCellStyle = this.workbook.createCellStyle();
+			this.boldCellStyle.setWrapText(true);
+	        this.boldCellStyle.setAlignment(org.apache.poi.ss.usermodel.HorizontalAlignment.LEFT);
+	        this.boldCellStyle.setFillForegroundColor(200);
+	        this.boldCellStyle.setFillPattern(org.apache.poi.ss.usermodel.FillPatternType.SOLID_FOREGROUND);
+	        this.boldCellStyle.setFont(boldFont);			
+		}
+
+		if (!this.spreadsheet[toSheetName]) {
+			this.spreadsheet[toSheetName] = this.workbook.createSheet(toSheetName);
+			this.rowCount[toSheetName] = 0;
+		}
+
+		if (this.rowCount[toSheetName] == 0) {
+			row = this.spreadsheet[toSheetName].createRow(this.rowCount[toSheetName]);
+			for (var cellNum = 0; cellNum < columns.length; cellNum++) {
+				var name = columns[cellNum];
+				var xlCell = row.createCell(cellNum);
+				xlCell.setCellStyle(this.headerStyle);
+				xlCell.setCellValue(name);
+		        this.spreadsheet[toSheetName].autoSizeColumn(cellNum);
+			}
+			this.rowCount[toSheetName]++;
+		}
+		
+		row = this.spreadsheet[toSheetName].createRow(this.rowCount[toSheetName]);
+		for (var cellNum = 0; cellNum < columns.length; cellNum++) {
+			var name = columns[cellNum];
+			var bold = false;
+			
+			// First look if the attribute name is prepended with pipe (|) and if so, it's to be BOLDed
+			var att = entry["|" + name];
+			if (att == null) {
+				att = entry[name];	
+			}
+			
+			var value = null;
+			if (att != null) {
+				var attName = att.getName();
+
+				// Pipe symbol prefix indicates Bold font
+				if (attName.startsWith("|")) {
+					bold = true;
+				}
+				var values = att.getValues();
+				if (values.length == 1) {
+					var value = values[0];
+				} else {
+					//row.setHeightInPoints((Math.max(1, values.length) * this.spreadsheet[toSheetName].getDefaultRowHeightInPoints()));
+					var arr = [];
+					for (var value in values) {
+						arr.push(value.trim());
+					}
+					var value = arr.join("\n");
+				}
+			}	
+
+			var xlCell = row.createCell(cellNum);
+			if (bold) {
+	 			xlCell.setCellStyle(this.boldCellStyle);
+			} else {
+	 			xlCell.setCellStyle(this.cellStyle);
+			}
+			xlCell.setCellValue(value);
+		}
+
+		this.rowCount[toSheetName]++;
+	}
+	
+	// Initialize this object
+	this.initialize = function() {
+		this.log(" v" + this.vrs);
+		
+		if (this.columnsFileName) {
+			var file = new java.io.File(this.columnsFileName) 
+			if (!file.exists()) {
+				this.log("FATAL", "Columns file name does not exist: " + this.columnsFileName, true);
+			}
+			
+			this.columns = loadFileToArray(this.columnsFileName);
+		} else 
+		if (this.columnNames) {
+			var sep = ",";
+			if (this.columnNames.contains(";")) {
+				sep = ";";
+			}
+			this.columns = system.splitString(this.columnNames, sep);
+		}
+
+		if (String(this.filenameTemplate).trim() != "") {
+			this.filename = this.map.evaluate("Excel sheet filename", this.filenameTemplate, this.entry);
+		}
+	}	
+	
+	// Initialization code below here
+	
+	this.initialize();
+	
+	return this;
+}]]></parameter>
+        </Script>
+        <Script name="WordDoc">
+            <ModTime>1643706651290</ModTime>
+            <parameter name="includeFiles"/>
+            <parameter name="script"><![CDATA[var WordDoc = function (filenameTemplate)
+{
+	this.vrs = "20220201 1010"; // First version
+
+	this.filenameTemplate = filenameTemplate;
+	this.map = new Mapper();
+	 
+	this.log = function(lvl, msg) {
+		if (typeof lvl == "undefined") {
+			msg = "";
+			lvl = "INFO";
+		} else
+		if (typeof msg == "undefined") {
+			msg = lvl;
+			lvl = "INFO";
+		}
+		 
+		log.msg(lvl, "[WordDoc] " + msg);
+	}
+	
+	// 
+	
+	// Generate a Word Doc based on a file template
+	this.generate = function(entry) {
+		// Get filename
+		filename = this.map.evaluate("Word doc filename", this.filenameTemplate, entry);
+		this.log("Generating Word doc: " + filename);
+		
+		//Blank Document
+		var document = new org.apache.poi.xwpf.usermodel.XWPFDocument();
+		  
+		//Write the Document in file system
+		//fos = new java.io.ByteArrayOutputStream();
+		fos = new java.io.FileOutputStream(new java.io.File("POC_MVP/" + filename));
+
+		// First create the Abstract
+		var paragraph = document.createParagraph();
+		var run = paragraph.createRun();
+		run.setBold(true);
+		run.setFontSize(12);
+		
+		var contents = entry.getString("contents");
+		var lines = system.splitString(contents, "\n");
+		
+		for (var line in lines) {
+			run.setText(line);
+			run.addBreak();
+		}
+
+		document.write(fos);
+		fos.close();
+		
+		if (fos instanceof java.io.ByteArrayOutputStream) {
+			return fos.toByteArray();
+		}
+	}
+	
+	this.initialize = function() {
+		this.log(" v" + this.vrs);
+	}	
+	
+	// Initialization code below here
+	
+	this.initialize();
+	
+	return this;
+}]]></parameter>
+        </Script>
+        <Script name="Mapper">
+            <ModTime>1643707269916</ModTime>
+            <parameter name="includeFiles"/>
+            <parameter name="script"><![CDATA[var Mapper = function (filePath)
+{
+	this.vrs = "20220201 1021"; // First version
+
+	this.filePath = filePath || "";
+	this.rules = [];
+	
+	this.log = function(lvl, msg) {
+		if (typeof lvl == "undefined") {
+			msg = "";
+			lvl = "INFO";
+		} else
+		if (typeof msg == "undefined") {
+			msg = lvl;
+			lvl = "INFO";
+		}
+		
+		log.msg(lvl, "[Mapper] " + msg);
+	}
+	
+	this.initialize = function() {
+		this.log(" v" + this.vrs);
+		
+		if (this.filePath != "") {
+			var rulesArray = loadFileToArray(filePath);
+			var rules = java.util.ArrayList();
+			
+			// Now to correct for multi-line mapping scripts
+
+			var ruleIndex = 0;			
+			while (ruleIndex < rulesArray.length) {
+				var rule = rulesArray[ruleIndex++];
+				// If this line continues, then read the next one
+				while (rule.endsWith("\\") && ruleIndex < rulesArray.length) {
+					rule = rule.substring(0, rule.length-1) + "\n" + rulesArray[ruleIndex++];
+				}
+				rules.add(rule);
+			}			
+			
+			this.rules = rules.toArray();
+		}
+	}
+	
+	// Local eval function that limits access to privileged script beans (like main and session)
+	this.eval = function(evalStr, entry) {
+		//this.prepareGlobalState();
+		var exceptn = null;
+		try {
+			var result = eval(evalStr);
+			return result;
+		} catch (ex) {
+			exceptn = ex;
+		} finally {
+			//this.restoreGlobalState();
+		}
+		
+		if (exceptn != null) {
+			throw exceptn;
+		}
+	}
+
+	
+	this.evaluateItem = function(attrName, evalStr, entryOrArray) {
+		var entries = entryOrArray;
+		if (entryOrArray instanceof com.ibm.di.entry.Entry) {
+			entries = [entryOrArray];
+		}
+		
+		var evalError = "";
+		//check if it's an attribute in the entry
+		for (i = 0; i < entries.length; i++) {
+			var entry = entries[i];
+			if (entry == null) {
+				//log("WARN", "Entry #" + i + " passed to map() is null");
+				continue;
+			} else
+			if (entry && entry[evalStr]) {
+				return entry[evalStr]; // TODO does this handle multi-values now?
+			} else {
+				try {
+					evalValue = this.eval(evalStr, entry);
+				} catch (e) {
+					evalValue = null;
+				}
+	
+				if (evalValue != null) {
+					return evalValue;
+				} else {
+					// We only want to return null at this point IF we have checked all entries in the array
+					if (i >= entries.length) {
+						return null;				
+					}
+	/*
+						this.addMappingError("evaluateItem(" + evalStr + ") for "
+												+ attrName
+												+ " returned null. " 
+												+ evalError, 
+											 entry.getString(srcUniqueId));
+	*/										 
+				}
+			}
+		}
+	}
+
+
+	this.evaluate = function(attrName, rule, entryOrArray) {
+		var elem = [];
+		var eval = false;
+		var evalStr;
+		var bracketDepth = 0;
+		var rule = rule.replaceAll("\n", "_NEWLINE_");
+		var st = new java.util.StringTokenizer(rule, "{}", true);
+		var bracketDepth = 0;
+		while (st.hasMoreTokens()) {
+			var token = st.nextToken();
+			if (token == "{") {
+				if (bracketDepth++ == 0) {
+					eval = true;
+					evalStr = "";
+				} else {
+					evalStr += "{";
+				}
+			} else if (token == "}") {
+				if (--bracketDepth == 0) {
+					eval = false;
+					var evalValue = this.evaluateItem(attrName, evalStr, entryOrArray);
+					if (typeof evalValue != "undefined" && evalValue != null) {
+						elem.push(evalValue);
+					}
+				} else {
+					evalStr += "}";
+				}
+			} else if (eval) {
+				evalStr += token;
+			} else {
+				elem.push(token);
+			}
+		}
+
+		if (bracketDepth > 0) {
+			var errmsg = "Assignment of " 
+							+ attrName 
+							+ " is missing a closing curly brace: " 
+							+ rule;
+			this.log("ERROR", errmsg);
+			throw errmsg;
+		}
+
+		if (elem.length == 1) {
+			var item = elem[0];
+			if (typeof item == "string") {
+				return item.replaceAll("_NEWLINE_", "\n");
+			} else {
+				return item;
+			}
+		} else 
+		if (elem.length == 0) {
+			return null;
+		} else {
+			return elem.join("").replaceAll("_NEWLINE_", "\n");
+		}
+	}
+
+	this.map = function(entryOrArray, useRule) {
+		var entries = entryOrArray;
+		if (entryOrArray instanceof com.ibm.di.entry.Entry) {
+			entries = [entryOrArray];
+		}
+		
+		// First check if useRule is passed, in which case simply return this mapping result
+		if (typeof useRule != "undefined") {
+			var rule = useRule;
+			var p = rule.indexOf("=");
+			if (p < 0) { continue; }
+			
+			var name = rule.substring(0, p).trim();
+			rule = rule.substring(p+1);
+			
+			return {name: name, value: this.evaluate(name, rule, entryOrArray)};
+		}
+		
+		// Otherwise apply rules to map the entire entryOrArray, returning a mappedEntry
+		var mappedEntry = system.newEntry();
+		
+		for (var i = 0; i < this.rules.length; i++) {
+			var rule = String(this.rules[i]).trim();
+			var p = rule.indexOf("=");
+			if (p < 0) { continue; }
+			
+			var name = rule.substring(0, p);
+			rule = rule.substring(p+1);
+			
+			var evalValue = this.evaluate(name, rule, entryOrArray);
+			if (evalValue != null) {
+				mappedEntry[name] = evalValue;
+			}
+		}
+		
+		return mappedEntry;
+	}
+
+	// Initialization code below here
+
+	this.initialize();
+	
+	return this;
+}]]></parameter>
+        </Script>
+    <Script name="DatasetObject">
+            <ModTime>1645108811761</ModTime>
+            <parameter name="includeFiles"/>
+            <parameter name="script"><![CDATA[var Dataset = function(ctr, table) {
+	this.vrs = "2022020216 1309"; // Initial version
+	
+	this.ids = {};
+	this.table = table;
+	
+	// Log function
+	this.log = function(lvl, msg) {
+		if (typeof lvl == "undefined") {
+			lvl = "INFO";
+			msg = "";
+		} else
+		if (typeof msg == "undefined") {
+			msg = lvl;
+			lvl = "INFO";
+		}
+		
+		log(lvl, "[Dataset] " + msg);
+	}
+	
+	// Function to create this Dataset object
+	this.initialize = function() {
+		var cnt = 0;
+		var e;
+		var data = null;
+		
+		this.log(" v" + this.vrs);
+		
+		var stmt = "select * from " + table;
+		
+		task.logmsg("Executing " + stmt);
+		
+		try {
+			ctr.execSQLSelect(stmt);
+			while ((e = ctr.getNextSQLSelectEntry()) != null) {
+				data = fromJson(e.toJSON());
+				
+				this.ids = this.ids || {};
+				
+				var val = (e.getString("id") || "").trim();
+				if (!val) {
+					task.logmsg("ERROR", "No value for id found for " + e.toJSON());
+				} else {
+					if (this.ids[val]) {
+						this.log("ERROR", "Duplicate key (id: " + val
+										+ ") for " + e.toJSON()
+										+ "\n     - previous: " + toJson(this.ids[val]));
+					}
+					this.ids[val] = data;	
+				}
+				cnt++;
+			}
+		} catch (ex){
+			this.log("ERROR", "Error performing statment: " + stmt + " - " + ex);
+		}
+		task.logmsg("  -> found " + cnt + " objects");
+	}
+	
+	// Return the object (or array of objects) for a specific keyvalue. Can be an array of objects if foreignKey is specified, otherwise a single object
+	this.get = function(keyValue, foreignKey) {
+		// If no foreign key specified, then find a single item based on its keyValue
+		if (typeof foreignKey == "undefined") {
+			return this.ids[keyValue] || {name: "*undefined (" + this.table + " id=" + keyValue + ")*"}	
+		}
+		// Otherwise, return an array of objects based on the passed foreignKey
+		var list = new java.util.ArrayList();
+		keyValue = String(keyValue);
+		for (var oid in this.ids) {
+			var obj = this.ids[oid];
+			var val = String(obj[foreignKey] || "");
+			if (keyValue.equalsIgnoreCase(val)) {
+				list.add(obj);
+			}
+		}
+		
+		var returnArray = list.toArray();
+		if (returnArray.length == 1) {
+			return returnArray[0]
+		} else {
+			return returnArray;
+		}
+	}
+	
+	// Return an object with properties corresponding to arrays of objects with the same value in the argument 'field' (property)
+	this.byField = function(field) {
+		var result = {};
+		
+		for (var id in this.ids) {
+			var obj = this.ids[id];
+			var fieldVal = obj[field] || null;
+			if (fieldVal) {
+				result[fieldVal] = result[fieldVal] || new java.util.ArrayList();
+				result[fieldVal].add(obj);
+			}
+		}
+		
+		for (var item in result) {
+			result[item] = result[item].toArray();
+		}
+		
+		return result;
+	}
+	
+	// Returns an Array of objects with the same value of the passed 'field' argument
+	this.findByField = function(fieldName, fieldValue) {
+		var list = new java.util.ArrayList();
+		fieldValue = String(fieldValue || "").trim();
+		for (var id in this.ids) {
+			var obj = this.ids[id];
+			var objField = obj[fieldName];
+
+			if (!objField) continue;
+			
+			if (String(objField).trim().equalsIgnoreCase(fieldValue)) {
+				list.add(obj);
+			}
+		}
+		
+		return list.toArray();
+	}
+	
+	// Return array of fields
+	this.fields = function() {
+		var list = new java.util.ArrayList();
+		for (var id in this.ids) {
+			var obj = this.ids[id];
+			for (var propName in obj) {
+				list.add(propName);
+			}
+			return list.toArray();
+		}
+	}
+	
+	// Here comes initialization
+	
+	this.initialize();
+
+	return this;
+}]]></parameter>
+        </Script>
+        <Script name="FunctionLibrary">
+            <ModTime>1645013198786</ModTime>
+            <parameter name="includeFiles"/>
+            <parameter name="script"><![CDATA[_VRS = "20220216 1305"; // Initial version
+
+function log(lvl, msg) {
+	if (typeof lvl == "undefined") {
+		lvl = "INFO";
+		msg = "";
+	} else
+	if (typeof msg == "undefined") {
+		msg = lvl;
+		lvl = "INFO";
+	}
+	
+	task.logmsg(lvl, msg);
+}
+
+log("FunctionLibrary v" + _VRS);
+
+function lj(txt, len, lineCnt) {
+	txt = String(txt);
+	if (txt.length > len) return txt;
+	if (txt.length % 2 == 1) txt = txt + " ";
+	if (typeof lineCnt == "undefined" || (lineCnt % 2 == 0 && lineCnt > 0)) {
+		return (txt + "                                                                  ").substring(0, len);
+	} else {
+		return (txt + " . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .").substring(0, len);
+	}
+}
+
+function rj(txt, len, lineCnt) {
+	txt = String(txt);
+	if (txt.length > len) return txt;
+	if (typeof lineCnt == "undefined" || (lineCnt % 2 == 0 && lineCnt > 0)) {
+		var pad = "                                                                  ";
+	} else {
+		var pad = " . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .";
+	}
+	return pad.substring(0, len - txt.length) + txt;
+}]]></parameter>
+        </Script>
+        <Script name="Set up Datasets">
+            <ModTime>1645173658394</ModTime>
+            <parameter name="includeFiles"/>
+            <parameter name="script"><![CDATA[apps = new Dataset(sf, "costs_application");
+sectors = new Dataset(sf, "costs_sector");
+servers = new Dataset(sf, "costs_server");
+servers_customers = new Dataset(sf, "")
+app_servers = new Dataset(sf, "costs_application_servers");
+products = new Dataset(sf, "costs_product");
+product_groups = new Dataset(sf, "costs_productgroup");
+product_delivery = new Dataset(sf, "costs_productdelivery");
+productgroup_products = new Dataset(sf, "costs_productgroup_products");
+product_types = new Dataset(sf, "costs_producttype");
+
+//	accountings = new Dataset(sf, "costs_accounting");
+
+//invoice_serverdetails = new Dataset(sf, "invoice_serverdetail");
+//invoice_linedetails = new Dataset(sf, "invoice_invoicelinedetail");
+//invoice_lines = new Dataset(sf, "invoice_invoiceline");]]></parameter>
+        </Script>
     </Folder>
     <JavaLibraries/>
     <JavaProperties/>
@@ -2561,7 +4123,7 @@ function isActive(user) {
         </InstanceProperties>
         <TombstonesConfig name="Tombstones"/>
         <SolutionInterface name="SolutionInterface">
-            <ModTime>1643109988742</ModTime>
+            <ModTime>1644241935001</ModTime>
             <InstanceID>BrukerGruppeSync</InstanceID>
             <enabled>true</enabled>
         </SolutionInterface>

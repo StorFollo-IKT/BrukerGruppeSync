@@ -1,0 +1,51 @@
+------ COSTS_APPLICATION ------
+  active                   : true                                               - class java.lang.Boolean
+  cloud                    : false                                              - class java.lang.Boolean
+  customer_id              : AK                                                 - class java.lang.String
+  department_id            : 984                                                - class java.lang.Integer
+  external_cost            : 0                                                  - class java.lang.Integer
+  id                       : 1                                                  - class java.lang.Integer
+  identifier               : 1028A                                              - class java.lang.String
+  internal_hours           : 1                                                  - class java.lang.Integer
+  licence_cost             : 12662                                              - class java.lang.Integer
+  name                     : Bravida Integra                                    - class java.lang.String
+  responsible_id           :                                                    - object
+  sector_id                : 3                                                  - class java.lang.Integer
+  super_user_id            :                                                    - object
+  vendor                   : Bravida                                            - class java.lang.String
+  ------ COSTS_APPLICATION_SERVERS ------
+  application_id           : 1                                                  - class java.lang.Integer
+  id                       : 4455                                               - class java.lang.Integer
+  server_id                : 61                                                 - class java.lang.Integer
+  ------ COSTS_PRODUCT ------
+  active                   : true                                               - class java.lang.Boolean
+  id                       : 1                                                  - class java.lang.Integer
+  identifier               : 1330                                               - class java.lang.String
+  name                     : Virtuell server, liten                             - class java.lang.String
+  price                    : 1338                                               - class java.lang.Integer
+  type_id                  : 1                                                  - class java.lang.Integer
+  ------ COSTS_PRODUCTDELIVERY ------
+  account                  : 120007                                             - class java.lang.String
+  amount                   : 60                                                 - class java.lang.Integer
+  cost_center_id           : 176                                                - class java.lang.Integer
+  customer_id              : FK                                                 - class java.lang.String
+  function_id              : 55                                                 - class java.lang.Integer
+  id                       : 2                                                  - class java.lang.Integer
+  product_id               : 26                                                 - class java.lang.Integer
+  sector_id                :                                                    - object
+  ------ COSTS_PRODUCTGROUP ------
+  account                  : 119520                                             - class java.lang.String
+  active                   : true                                               - class java.lang.Boolean
+  assignment_product_id    : 55                                                 - class java.lang.Integer
+  group_type               : user                                               - class java.lang.String
+  id                       : 2                                                  - class java.lang.Integer
+  name                     : StorFollo IKT Standard Arbeidsflate (M365 E3)      - class java.lang.String
+  ------ COSTS_PRODUCTGROUP_PRODUCTS ------
+  id                       : 4                                                  - class java.lang.Integer
+  product_id               : 55                                                 - class java.lang.Integer
+  productgroup_id          : 2                                                  - class java.lang.Integer
+  ------ COSTS_PRODUCTTYPE ------
+  description              : Alle typer servere                                 - class java.lang.String
+  id                       : 1                                                  - class java.lang.Integer
+  type                     : Server                                             - class java.lang.String
+  
